@@ -1,0 +1,8 @@
+{
+  "scss.validate": false,
+  "css.validate": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.quickSuggestions": {
+    "strings": "on"
+  }
+}

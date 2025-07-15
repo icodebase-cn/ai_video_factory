@@ -61,14 +61,14 @@ const handleClose = () => {
     padding-left: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-size: 14px;
     user-select: none;
     -webkit-app-region: drag;
 
     img {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
     }
   }
 

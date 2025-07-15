@@ -1,3 +1,3 @@
 export default {
-  appName: '短视频工厂',
+  appName: 'AI Short Video Factory - 短视频工厂',
 }

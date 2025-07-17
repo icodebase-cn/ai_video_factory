@@ -16,8 +16,8 @@ export default defineConfig({
   },
   shortcuts: [['drag-bar', 'drag after:window-control-bar-no-drag-mask']],
   rules: [
-    ['drag', { '-webkit-app-region': 'drag' }],
-    ['no-drag', { '-webkit-app-region': 'no-drag' }],
+    ['window-drag', { '-webkit-app-region': 'drag' }],
+    ['window-no-drag', { '-webkit-app-region': 'no-drag' }],
     [
       'window-control-bar-no-drag-mask',
       {

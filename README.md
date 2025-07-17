@@ -83,13 +83,13 @@
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启一个Pull Request
 
-<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
-
 ### 主要贡献者：
 
 <a href="https://github.com/YILS-LIN/short-video-factory/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=YILS-LIN/short-video-factory" alt="contrib.rocks image" />
 </a>
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
 <!-- 许可证 -->
 ## 🎗 许可证

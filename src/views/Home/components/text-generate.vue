@@ -95,6 +95,11 @@ const outputText = ref('')
 const isGenerating = ref(false)
 const abortController = ref<AbortController | null>(null)
 const handleGenerate = async () => {
+  if (!appStore.prompt) {
+    toast.warning('提示词不能为空')
+    return
+  }
+
   const openai = createOpenAI({
     baseURL: appStore.llmConfig.apiUrl,
     apiKey: appStore.llmConfig.apiKey,
@@ -105,7 +110,8 @@ const handleGenerate = async () => {
   try {
     const result = streamText({
       model: openai(appStore.llmConfig.modelName),
-      system: ``,
+      // system: ``,
+      // 未来也许会设置一个系统提示词，但现在必须注释掉，因为部分接口提交空 system prompt 会报错
       prompt: appStore.prompt,
       onError: (error) => {
         throw error
@@ -119,7 +125,11 @@ const handleGenerate = async () => {
     console.log(`error`, error)
     // @ts-ignore
     if (error?.name !== 'AbortError' && error?.error?.name !== 'AbortError') {
-      toast.error('生成失败，请检查大模型配置是否正确')
+      // @ts-ignore
+      const errorMessage = error?.message || error?.error?.message
+      toast.error(
+        `生成失败，请检查大模型配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
+      )
     }
   } finally {
     abortController.value = null
@@ -166,9 +176,13 @@ const handleTestConfig = async () => {
     testStatus.value = TestStatusEnum.SUCCESS
     toast.success('大模型连接成功')
   } catch (error) {
-    console.log(`error`, error)
+    console.log(error)
     testStatus.value = TestStatusEnum.ERROR
-    toast.error('大模型连接失败，请检查配置是否正确')
+    // @ts-ignore
+    const errorMessage = error?.message
+    toast.error(
+      `大模型连接失败，请检查配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
+    )
   }
 }
 </script>

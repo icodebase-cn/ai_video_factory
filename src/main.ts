@@ -5,6 +5,9 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
+import Toast, { PluginOptions } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+
 import 'virtual:uno.css'
 import './assets/base.scss'
 
@@ -31,6 +34,7 @@ document.title = GlobalSetting.appName
 const app = createApp(App)
 
 app.use(vuetify)
+app.use(Toast, { position: 'bottom-left', pauseOnFocusLoss: false } as PluginOptions)
 app.use(router)
 app.use(store)
 

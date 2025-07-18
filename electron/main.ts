@@ -39,7 +39,7 @@ function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'icon.png'),
     title: GlobalSetting.appName,
-    width: Math.ceil(width * 0.7),
+    width: Math.ceil(width * 0.8),
     height: Math.ceil(height * 0.8),
     minWidth: 800,
     minHeight: 650,

@@ -23,12 +23,20 @@ declare namespace NodeJS {
 
 // 在渲染器进程中使用，在 `preload.ts` 中暴露方法
 interface Window {
-  ipcRenderer: import('electron').IpcRenderer
+  ipcRenderer: Pick<import('electron').IpcRenderer, 'on' | 'once' | 'off' | 'send' | 'invoke'>
+  electron: {
+    isWinMaxed: () => Promise<boolean>
+    winMin: () => void
+    winMax: () => void
+    winClose: () => void
+    selectFolder: (params: import('./types').SelectFolderParams) => Promise<string>
+    listFilesFromFolder: (params: import('./types').ListFilesFromFolderParams) => Promise<string[]>
+  }
   sqlite: {
-    query: (param: import('./sqlite/types').queryParam) => Promise<any>
-    insert: (param: import('./sqlite/types').insertParam) => Promise<any>
-    update: (param: import('./sqlite/types').updateParam) => Promise<any>
-    delete: (param: import('./sqlite/types').deleteParam) => Promise<any>
-    bulkInsertOrUpdate: (param: import('./sqlite/types').bulkInsertOrUpdateParam) => Promise<any>
+    query: (param: import('./sqlite/types').queryParams) => Promise<any>
+    insert: (param: import('./sqlite/types').insertParams) => Promise<any>
+    update: (param: import('./sqlite/types').updateParams) => Promise<any>
+    delete: (param: import('./sqlite/types').deleteParams) => Promise<any>
+    bulkInsertOrUpdate: (param: import('./sqlite/types').bulkInsertOrUpdateParams) => Promise<any>
   }
 }

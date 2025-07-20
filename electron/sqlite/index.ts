@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import BetterSqlite3 from 'better-sqlite3'
-import { queryParam, insertParam, updateParam, deleteParam, bulkInsertOrUpdateParam } from './types'
+import { queryParams, insertParams, updateParams, deleteParams, bulkInsertOrUpdateParams } from './types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -53,7 +53,7 @@ class Database {
     })
   }
 
-  query(param: queryParam): Promise<any[]> {
+  query(param: queryParams): Promise<any[]> {
     return new Promise<any[]>((resolve, _reject) => {
       const stmt = this.db.prepare(param.sql)
       const rows = param.params ? stmt.all(...param.params) : stmt.all()
@@ -61,7 +61,7 @@ class Database {
     })
   }
 
-  insert(param: insertParam): Promise<number> {
+  insert(param: insertParams): Promise<number> {
     return new Promise<number>((resolve, _reject) => {
       const keys = Object.keys(param.data)
       const values = Object.values(param.data)
@@ -79,7 +79,7 @@ class Database {
     return result.length > 0
   }
 
-  update(param: updateParam): Promise<number> {
+  update(param: updateParams): Promise<number> {
     return new Promise<number>((resolve, _reject) => {
       const entries = Object.entries(param.data)
         .map(([key, _value]) => `${key} = ?`)
@@ -93,7 +93,7 @@ class Database {
     })
   }
 
-  delete(param: deleteParam): Promise<void> {
+  delete(param: deleteParams): Promise<void> {
     return new Promise<void>((resolve, _reject) => {
       const sql = `DELETE FROM ${param.table} WHERE ${param.condition}`
       const stmt = this.db.prepare(sql)
@@ -102,7 +102,7 @@ class Database {
     })
   }
 
-  async bulkInsertOrUpdate(param: bulkInsertOrUpdateParam): Promise<void> {
+  async bulkInsertOrUpdate(param: bulkInsertOrUpdateParams): Promise<void> {
     return new Promise<void>((resolve, _reject) => {
       const keys = Object.keys(param.data[0])
       const placeholders = keys.map(() => '?').join(',')

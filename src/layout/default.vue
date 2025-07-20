@@ -29,17 +29,17 @@ const route = useRoute()
 const windowIsMaxed = ref(false)
 
 window.addEventListener('resize', async () => {
-  windowIsMaxed.value = await window.ipcRenderer.invoke('win-maxed')
+  windowIsMaxed.value = await window.electron.isWinMaxed()
 })
 
 const handleMin = () => {
-  window.ipcRenderer.send('win-min')
+  window.electron.winMin()
 }
 const handleMax = () => {
-  window.ipcRenderer.send('win-max')
+  window.electron.winMax()
 }
 const handleClose = () => {
-  window.ipcRenderer.send('win-close')
+  window.electron.winClose()
 }
 </script>
 

@@ -10,15 +10,19 @@ export const useAppStore = defineStore(
       apiUrl: '',
       apiKey: '',
     })
-
     const updateLLMConfig = (newConfig: typeof llmConfig.value) => {
       llmConfig.value = newConfig
     }
+
+    const videoAssetsFolder = ref('')
+    const videoExportFolder = ref('')
 
     return {
       prompt,
       llmConfig,
       updateLLMConfig,
+      videoAssetsFolder,
+      videoExportFolder,
     }
   },
   {

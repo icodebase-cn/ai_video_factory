@@ -1,8 +1,10 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BrowserWindow, ipcMain } from 'electron'
-import { queryParam, insertParam, updateParam, deleteParam } from './sqlite/types'
+import { BrowserWindow, ipcMain, dialog, app } from 'electron'
+import { queryParams, insertParams, updateParams, deleteParams } from './sqlite/types'
 import { sqBulkInsertOrUpdate, sqDelete, sqInsert, sqQuery, sqUpdate } from './sqlite'
+import { ListFilesFromFolderParams, SelectFolderParams } from './types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -18,8 +20,29 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST
 
 export default function initIPC(win: BrowserWindow) {
+  // sqlite 查询
+  ipcMain.handle('sqlite-query', (_event, params: queryParams) => {
+    return sqQuery(params)
+  })
+  // sqlite 插入
+  ipcMain.handle('sqlite-insert', (_event, params: insertParams) => {
+    return sqInsert(params)
+  })
+  // sqlite 更新
+  ipcMain.handle('sqlite-update', (_event, params: updateParams) => {
+    return sqUpdate(params)
+  })
+  // sqlite 删除
+  ipcMain.handle('sqlite-delete', (_event, params: deleteParams) => {
+    return sqDelete(params)
+  })
+  // sqlite 批量插入或更新
+  ipcMain.handle('sqlite-bulk-insert-or-update', (_event, params: any) => {
+    return sqBulkInsertOrUpdate(params)
+  })
+
   // 是否最大化
-  ipcMain.handle('win-maxed', () => {
+  ipcMain.handle('is-win-maxed', () => {
     return win?.isMaximized()
   })
   //最小化
@@ -39,24 +62,23 @@ export default function initIPC(win: BrowserWindow) {
     win?.close()
   })
 
-  // sqlite 查询
-  ipcMain.handle('sqlite-query', (_event, params: queryParam) => {
-    return sqQuery(params)
+  // 选择文件夹
+  ipcMain.handle('select-folder', async (_event, params?: SelectFolderParams) => {
+    const result = await dialog.showOpenDialog(win, {
+      properties: ['openDirectory'],
+      title: params?.title || '选择文件夹',
+      defaultPath: params?.defaultPath || app.getPath('downloads'), // 默认打开 Downloads
+    })
+    if (!result.canceled && result.filePaths.length > 0) {
+      return result.filePaths[0] // 返回绝对路径
+    }
+    return null
   })
-  // sqlite 插入
-  ipcMain.handle('sqlite-insert', async (_event, params: insertParam) => {
-    return await sqInsert(params)
-  })
-  // sqlite 更新
-  ipcMain.handle('sqlite-update', async (_event, params: updateParam) => {
-    return await sqUpdate(params)
-  })
-  // sqlite 删除
-  ipcMain.handle('sqlite-delete', async (_event, params: deleteParam) => {
-    return await sqDelete(params)
-  })
-  // sqlite 批量插入或更新
-  ipcMain.handle('sqlite-bulk-insert-or-update', async (_event, params: any) => {
-    return await sqBulkInsertOrUpdate(params)
+
+  // 读取文件夹内所有文件
+  ipcMain.handle('list-files-from-folder', async (_event, params: ListFilesFromFolderParams) => {
+    const files = await fs.promises.readdir(params.folderPath, { withFileTypes: true })
+
+    return files.filter((file) => file.isFile()).map((file) => file.name)
   })
 }

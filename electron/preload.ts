@@ -1,5 +1,6 @@
 import { ipcRenderer, contextBridge } from 'electron'
-import { queryParam, insertParam, updateParam, deleteParam } from './sqlite/types'
+import { queryParams, insertParams, updateParams, deleteParams } from './sqlite/types'
+import { ListFilesFromFolderParams, SelectFolderParams } from './types'
 
 // --------- 向界面渲染进程暴露某些API ---------
 
@@ -26,20 +27,20 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   },
 })
 
+contextBridge.exposeInMainWorld('electron', {
+  isWinMaxed: () => ipcRenderer.invoke('is-win-maxed'),
+  winMin: () => ipcRenderer.send('win-min'),
+  winMax: () => ipcRenderer.send('win-max'),
+  winClose: () => ipcRenderer.send('win-close'),
+  selectFolder: (params: SelectFolderParams) => ipcRenderer.invoke('select-folder', params),
+  listFilesFromFolder: (params: ListFilesFromFolderParams) =>
+    ipcRenderer.invoke('list-files-from-folder', params),
+})
+
 contextBridge.exposeInMainWorld('sqlite', {
-  query: async (param: queryParam) => {
-    return await ipcRenderer.invoke('sqlite-query', param)
-  },
-  insert: async (param: insertParam) => {
-    return await ipcRenderer.invoke('sqlite-insert', param)
-  },
-  update: async (param: updateParam) => {
-    return await ipcRenderer.invoke('sqlite-update', param)
-  },
-  delete: async (param: deleteParam) => {
-    return await ipcRenderer.invoke('sqlite-delete', param)
-  },
-  bulkInsertOrUpdate: async (param: any) => {
-    return await ipcRenderer.invoke('sqlite-bulk-insert-or-update', param)
-  },
+  query: (params: queryParams) => ipcRenderer.invoke('sqlite-query', params),
+  insert: (params: insertParams) => ipcRenderer.invoke('sqlite-insert', params),
+  update: (params: updateParams) => ipcRenderer.invoke('sqlite-update', params),
+  delete: (params: deleteParams) => ipcRenderer.invoke('sqlite-delete', params),
+  bulkInsertOrUpdate: (params: any) => ipcRenderer.invoke('sqlite-bulk-insert-or-update', params),
 })

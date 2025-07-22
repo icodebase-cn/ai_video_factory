@@ -33,6 +33,7 @@
         <v-btn
           block
           prepend-icon="mdi-refresh"
+          :disabled="!appStore.videoAssetsFolder"
           :loading="refreshAssetsLoading"
           @click="refreshAssets"
         >
@@ -70,6 +71,9 @@ const handleSelectFolder = async () => {
 const videoAssets = ref<ListFilesFromFolderRecord[]>([])
 const refreshAssetsLoading = ref(false)
 const refreshAssets = async () => {
+  if (!appStore.videoAssetsFolder) {
+    return
+  }
   refreshAssetsLoading.value = true
   try {
     const assets = await window.electron.listFilesFromFolder({

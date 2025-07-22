@@ -5,7 +5,7 @@
       border
       rounded
     >
-      <div class="w-full h-full flex-1 flex gap-10 items-center justify-center">
+      <div class="w-full h-0 flex-1 flex gap-10 items-center justify-center">
         <v-progress-circular
           color="primary"
           model-value="0"

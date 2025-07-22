@@ -91,6 +91,7 @@ import { useToast } from 'vue-toastification'
 const toast = useToast()
 const appStore = useAppStore()
 
+// 生成文案
 const outputText = ref('')
 const isGenerating = ref(false)
 const abortController = ref<AbortController | null>(null)

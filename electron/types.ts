@@ -6,3 +6,8 @@ export interface SelectFolderParams {
 export interface ListFilesFromFolderParams {
   folderPath: string
 }
+
+export interface ListFilesFromFolderRecord {
+  name: string
+  path: string
+}

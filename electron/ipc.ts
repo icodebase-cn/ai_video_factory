@@ -78,7 +78,11 @@ export default function initIPC(win: BrowserWindow) {
   // 读取文件夹内所有文件
   ipcMain.handle('list-files-from-folder', async (_event, params: ListFilesFromFolderParams) => {
     const files = await fs.promises.readdir(params.folderPath, { withFileTypes: true })
-
-    return files.filter((file) => file.isFile()).map((file) => file.name)
+    return files
+      .filter((file) => file.isFile())
+      .map((file) => ({
+        name: file.name,
+        path: path.join(params.folderPath, file.name).replace(/\\/g, '/'),
+      }))
   })
 }

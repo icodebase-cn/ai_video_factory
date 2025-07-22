@@ -30,7 +30,9 @@ interface Window {
     winMax: () => void
     winClose: () => void
     selectFolder: (params: import('./types').SelectFolderParams) => Promise<string>
-    listFilesFromFolder: (params: import('./types').ListFilesFromFolderParams) => Promise<string[]>
+    listFilesFromFolder: (
+      params: import('./types').ListFilesFromFolderParams,
+    ) => Promise<import('./types').ListFilesFromFolderRecord[]>
   }
   sqlite: {
     query: (param: import('./sqlite/types').queryParams) => Promise<any>

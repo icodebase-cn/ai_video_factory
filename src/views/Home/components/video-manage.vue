@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ListFilesFromFolderRecord } from 'electron/types'
+import { ListFilesFromFolderRecord } from '~/electron/types'
 import { useToast } from 'vue-toastification'
 import { useAppStore } from '@/store'
 import { ref } from 'vue'

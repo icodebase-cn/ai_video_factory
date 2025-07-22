@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ListFilesFromFolderRecord } from 'electron/types'
+import { ListFilesFromFolderRecord } from '~/electron/types'
 import { ref } from 'vue'
 
 defineProps<{ asset: ListFilesFromFolderRecord }>()

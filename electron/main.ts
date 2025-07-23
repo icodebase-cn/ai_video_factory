@@ -4,7 +4,7 @@ import path from 'node:path'
 import GlobalSetting from '../setting.global'
 import initIPC from './ipc'
 import { initSqlite } from './sqlite'
-import useCookieAllowCrossSite from './lib/cookieAllowCrossSite'
+import useCookieAllowCrossSite from './lib/cookie-allow-cross-site'
 
 // 用于引入 CommonJS 模块的方法
 // import { createRequire } from 'node:module'

@@ -33,6 +33,7 @@ interface Window {
     listFilesFromFolder: (
       params: import('./types').ListFilesFromFolderParams,
     ) => Promise<import('./types').ListFilesFromFolderRecord[]>
+    getEdgeTtsVoiceList: () => Promise<import('@duyquangnvx/edge-tts').EdgeTTSVoice[]>
   }
   sqlite: {
     query: (param: import('./sqlite/types').queryParams) => Promise<any>

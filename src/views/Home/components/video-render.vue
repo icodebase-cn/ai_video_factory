@@ -1,7 +1,7 @@
 <template>
   <div class="h-0 flex-1">
     <v-sheet
-      class="h-full px-2 pt-4 flex flex-col gap-6 items-center justify-between"
+      class="h-full p-2 pt-4 flex flex-col gap-6 items-center justify-between"
       border
       rounded
     >
@@ -22,8 +22,8 @@
         </v-btn>
       </div>
 
-      <div class="w-full flex gap-2">
-        <v-text-field label="输出文件夹" density="compact"></v-text-field>
+      <div class="w-full flex gap-2 mb-2">
+        <v-text-field label="输出文件夹" density="compact" hide-details readonly></v-text-field>
         <v-btn class="mt-[2px]" prepend-icon="mdi-folder-open"> 选择 </v-btn>
       </div>
     </v-sheet>

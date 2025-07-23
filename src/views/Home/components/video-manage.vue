@@ -1,13 +1,15 @@
 <template>
   <div class="w-full h-full">
     <v-sheet class="h-full p-2 flex flex-col" border rounded>
-      <div class="flex gap-2">
+      <div class="flex gap-2 mb-2">
         <v-text-field
           :model-value="appStore.videoAssetsFolder"
           label="分镜视频素材文件夹"
           density="compact"
+          hide-details
           readonly
-        ></v-text-field>
+        >
+        </v-text-field>
         <v-btn class="mt-[2px]" prepend-icon="mdi-folder-open" @click="handleSelectFolder">
           选择
         </v-btn>

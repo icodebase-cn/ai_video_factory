@@ -2,9 +2,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BrowserWindow, ipcMain, dialog, app } from 'electron'
-import { queryParams, insertParams, updateParams, deleteParams } from './sqlite/types'
 import { sqBulkInsertOrUpdate, sqDelete, sqInsert, sqQuery, sqUpdate } from './sqlite'
 import { ListFilesFromFolderParams, SelectFolderParams } from './types'
+import { getEdgeTtsVoiceList } from './tts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -21,25 +21,15 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 export default function initIPC(win: BrowserWindow) {
   // sqlite 查询
-  ipcMain.handle('sqlite-query', (_event, params: queryParams) => {
-    return sqQuery(params)
-  })
+  ipcMain.handle('sqlite-query', (_event, params) => sqQuery(params))
   // sqlite 插入
-  ipcMain.handle('sqlite-insert', (_event, params: insertParams) => {
-    return sqInsert(params)
-  })
+  ipcMain.handle('sqlite-insert', (_event, params) => sqInsert(params))
   // sqlite 更新
-  ipcMain.handle('sqlite-update', (_event, params: updateParams) => {
-    return sqUpdate(params)
-  })
+  ipcMain.handle('sqlite-update', (_event, params) => sqUpdate(params))
   // sqlite 删除
-  ipcMain.handle('sqlite-delete', (_event, params: deleteParams) => {
-    return sqDelete(params)
-  })
+  ipcMain.handle('sqlite-delete', (_event, params) => sqDelete(params))
   // sqlite 批量插入或更新
-  ipcMain.handle('sqlite-bulk-insert-or-update', (_event, params: any) => {
-    return sqBulkInsertOrUpdate(params)
-  })
+  ipcMain.handle('sqlite-bulk-insert-or-update', (_event, params) => sqBulkInsertOrUpdate(params))
 
   // 是否最大化
   ipcMain.handle('is-win-maxed', () => {
@@ -85,4 +75,7 @@ export default function initIPC(win: BrowserWindow) {
         path: path.join(params.folderPath, file.name).replace(/\\/g, '/'),
       }))
   })
+
+  // 获取EdgeTTS语音列表
+  ipcMain.handle('get-edge-tts-voice-list', () => getEdgeTtsVoiceList())
 }

@@ -35,6 +35,7 @@ contextBridge.exposeInMainWorld('electron', {
   selectFolder: (params: SelectFolderParams) => ipcRenderer.invoke('select-folder', params),
   listFilesFromFolder: (params: ListFilesFromFolderParams) =>
     ipcRenderer.invoke('list-files-from-folder', params),
+  getEdgeTtsVoiceList: () => ipcRenderer.invoke('get-edge-tts-voice-list'),
 })
 
 contextBridge.exposeInMainWorld('sqlite', {

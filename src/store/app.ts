@@ -34,15 +34,15 @@ export const useAppStore = defineStore(
       // { label: '中性', value: 'Neutral' },
     ])
     const speedList = ref([
-      { label: '慢', value: 50 },
-      { label: '中', value: 100 },
-      { label: '快', value: 150 },
+      { label: '慢', value: -30 },
+      { label: '中', value: 0 },
+      { label: '快', value: 30 },
     ])
 
     const language = ref<string>()
     const gender = ref<string>()
     const voice = ref<EdgeTTSVoice | null>(null)
-    const speed = ref(100)
+    const speed = ref(0)
     const tryListeningText = ref('Hello，欢迎使用短视频工厂！')
 
     return {
@@ -63,6 +63,8 @@ export const useAppStore = defineStore(
     }
   },
   {
-    persist: true,
+    persist: {
+      omit: ['genderList', 'speedList'],
+    },
   },
 )

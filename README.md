@@ -58,6 +58,10 @@
 
 ## 🗺️ 路线图
 
+**当前正在积极开发中，即将发布第一个版本，喜欢可以点个 Star 支持一下！**
+
+下面是已实现和计划中的功能：
+
 - [x] 文案生成，兼容通用的 OpenAI 接口格式
 - [x] 语音合成，支持EdgeTTS
 - [ ] 视频剪辑，文案、视频、音频、字幕合成，自动混剪
@@ -72,10 +76,10 @@
 <!-- 贡献 -->
 ## 🤝 贡献
 
-贡献让开源社区成为了一个学习、启发和创造的绝佳场所。您所做的任何贡献都是**非常感谢**的。
+贡献让开源社区成为了一个学习、启发和创造的绝佳场所。**非常感谢**您所做的任何贡献。
 
-如果您有建议可以改善此项目，请fork该仓库并创建一个pull request。您也可以简单地创建一个带有"enhancement"标签的issue。
-不要忘记给项目点个星！再次感谢！
+如果您有可以改善此项目的建议，请fork本项目仓库并创建一个pull request。您也可以简单地创建一个带有"enhancement"标签的issue。
+不要忘记给项目点个Star！再次感谢！
 
 1. Fork此项目
 2. 创建您的功能分支 (`git checkout -b feature/AmazingFeature`)
@@ -91,13 +95,19 @@
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
+## 鸣谢
+
+- [rany2/edge-tts](https://github.com/rany2/edge-tts)
+- [duyquangnvx/edge-tts](https://github.com/duyquangnvx/edge-tts)
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
 <!-- 许可证 -->
 ## 🎗 许可证
 
 [![许可证][license-shield]][license-url]
 
 Copyright © 2025 YILS.
-
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 

@@ -95,7 +95,7 @@
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-## 鸣谢
+## 💖 鸣谢
 
 - [rany2/edge-tts](https://github.com/rany2/edge-tts)
 - [duyquangnvx/edge-tts](https://github.com/duyquangnvx/edge-tts)

@@ -1,25 +1,25 @@
-export interface queryParams {
+export interface QueryParams {
   sql: string
   params?: any[]
 }
 
-export interface insertParams {
+export interface InsertParams {
   table: string
   data: { [key: string]: any }
 }
 
-export interface updateParams {
+export interface UpdateParams {
   table: string
   data: { [key: string]: any }
   condition: string
 }
 
-export interface deleteParams {
+export interface DeleteParams {
   table: string
   condition: string
 }
 
-export interface bulkInsertOrUpdateParams {
+export interface BulkInsertOrUpdateParams {
   table: string
   data: any[]
 }

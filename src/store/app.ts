@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { EdgeTTSVoice } from '~/electron/lib/edge-tts'
 
 export const useAppStore = defineStore(
@@ -22,10 +22,28 @@ export const useAppStore = defineStore(
 
     // 语音合成
     const originalVoicesList = ref<EdgeTTSVoice[]>([])
+    const languageList = computed(() => {
+      return originalVoicesList.value
+        .map((voice) => voice.FriendlyName.split(' - ').pop()?.split(' (').shift())
+        .filter((language) => !!language)
+        .filter((language, index, arr) => arr.indexOf(language) === index)
+    })
+    const genderList = ref([
+      { label: '男性', value: 'Male' },
+      { label: '女性', value: 'Female' },
+      // { label: '中性', value: 'Neutral' },
+    ])
+    const speedList = ref([
+      { label: '慢', value: 50 },
+      { label: '中', value: 100 },
+      { label: '快', value: 150 },
+    ])
+
     const language = ref<string>()
     const gender = ref<string>()
     const voice = ref<EdgeTTSVoice | null>(null)
-    const speed = ref<string>()
+    const speed = ref(100)
+    const tryListeningText = ref('Hello，欢迎使用短视频工厂！')
 
     return {
       prompt,
@@ -34,10 +52,14 @@ export const useAppStore = defineStore(
       videoAssetsFolder,
       videoExportFolder,
       originalVoicesList,
+      languageList,
+      genderList,
+      speedList,
       language,
       gender,
       voice,
       speed,
+      tryListeningText,
     }
   },
   {

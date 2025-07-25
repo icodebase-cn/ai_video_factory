@@ -33,13 +33,16 @@ interface Window {
     listFilesFromFolder: (
       params: import('./types').ListFilesFromFolderParams,
     ) => Promise<import('./types').ListFilesFromFolderRecord[]>
-    getEdgeTtsVoiceList: () => Promise<import('@duyquangnvx/edge-tts').EdgeTTSVoice[]>
+    edgeTtsGetVoiceList: () => Promise<import('./lib/edge-tts').EdgeTTSVoice[]>
+    edgeTtsSynthesizeToBase64: (
+      params: import('./tts/types').edgeTtsSynthesizeToBase64Params,
+    ) => Promise<string>
   }
   sqlite: {
-    query: (param: import('./sqlite/types').queryParams) => Promise<any>
-    insert: (param: import('./sqlite/types').insertParams) => Promise<any>
-    update: (param: import('./sqlite/types').updateParams) => Promise<any>
-    delete: (param: import('./sqlite/types').deleteParams) => Promise<any>
-    bulkInsertOrUpdate: (param: import('./sqlite/types').bulkInsertOrUpdateParams) => Promise<any>
+    query: (param: import('./sqlite/types').QueryParams) => Promise<any>
+    insert: (param: import('./sqlite/types').InsertParams) => Promise<number>
+    update: (param: import('./sqlite/types').UpdateParams) => Promise<number>
+    delete: (param: import('./sqlite/types').DeleteParams) => Promise<void>
+    bulkInsertOrUpdate: (param: import('./sqlite/types').BulkInsertOrUpdateParams) => Promise<void>
   }
 }

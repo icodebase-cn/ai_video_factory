@@ -81,7 +81,7 @@ const refreshAssets = async () => {
     const assets = await window.electron.listFilesFromFolder({
       folderPath: appStore.videoAssetsFolder,
     })
-    console.log(`素材:`, assets)
+    console.log(`素材库刷新:`, assets)
     videoAssets.value = assets.filter((asset) => asset.name.endsWith('.mp4'))
     if (!videoAssets.value.length) {
       if (assets.length) {

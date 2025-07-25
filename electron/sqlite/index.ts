@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import BetterSqlite3 from 'better-sqlite3'
-import { queryParams, insertParams, updateParams, deleteParams, bulkInsertOrUpdateParams } from './types'
+import { QueryParams, InsertParams, UpdateParams, DeleteParams, BulkInsertOrUpdateParams } from './types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -53,7 +53,7 @@ class Database {
     })
   }
 
-  query(param: queryParams): Promise<any[]> {
+  query(param: QueryParams): Promise<any[]> {
     return new Promise<any[]>((resolve, _reject) => {
       const stmt = this.db.prepare(param.sql)
       const rows = param.params ? stmt.all(...param.params) : stmt.all()
@@ -61,7 +61,7 @@ class Database {
     })
   }
 
-  insert(param: insertParams): Promise<number> {
+  insert(param: InsertParams): Promise<number> {
     return new Promise<number>((resolve, _reject) => {
       const keys = Object.keys(param.data)
       const values = Object.values(param.data)
@@ -79,7 +79,7 @@ class Database {
     return result.length > 0
   }
 
-  update(param: updateParams): Promise<number> {
+  update(param: UpdateParams): Promise<number> {
     return new Promise<number>((resolve, _reject) => {
       const entries = Object.entries(param.data)
         .map(([key, _value]) => `${key} = ?`)
@@ -93,7 +93,7 @@ class Database {
     })
   }
 
-  delete(param: deleteParams): Promise<void> {
+  delete(param: DeleteParams): Promise<void> {
     return new Promise<void>((resolve, _reject) => {
       const sql = `DELETE FROM ${param.table} WHERE ${param.condition}`
       const stmt = this.db.prepare(sql)
@@ -102,7 +102,7 @@ class Database {
     })
   }
 
-  async bulkInsertOrUpdate(param: bulkInsertOrUpdateParams): Promise<void> {
+  async bulkInsertOrUpdate(param: BulkInsertOrUpdateParams): Promise<void> {
     return new Promise<void>((resolve, _reject) => {
       const keys = Object.keys(param.data[0])
       const placeholders = keys.map(() => '?').join(',')

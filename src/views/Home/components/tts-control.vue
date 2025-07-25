@@ -5,18 +5,18 @@
         v-model="appStore.language"
         density="comfortable"
         label="语言"
-        :items="languageList"
+        :items="appStore.languageList"
         no-data-text="无数据"
-        @update:model-value="handleClearVoice"
+        @update:model-value="clearVoice"
       ></v-combobox>
       <v-select
         v-model="appStore.gender"
         density="comfortable"
         label="性别"
-        :items="genderList"
+        :items="appStore.genderList"
         item-title="label"
         item-value="value"
-        @update:model-value="handleClearVoice"
+        @update:model-value="clearVoice"
       ></v-select>
       <v-select
         v-model="appStore.voice"
@@ -31,23 +31,67 @@
         v-model="appStore.speed"
         density="comfortable"
         label="语速"
-        :items="speedList"
+        :items="appStore.speedList"
         item-title="label"
         item-value="value"
       ></v-select>
-      <v-text-field density="comfortable" label="试听文本"></v-text-field>
-      <v-btn class="mb-2" prepend-icon="mdi-volume-high" block> 试听 </v-btn>
+      <v-text-field
+        v-model="appStore.tryListeningText"
+        density="comfortable"
+        label="试听文本"
+      ></v-text-field>
+      <v-btn
+        class="mb-2"
+        prepend-icon="mdi-volume-high"
+        block
+        :loading="tryListeningLoading"
+        @click="handleTryListening"
+      >
+        试听
+      </v-btn>
     </v-sheet>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAppStore } from '@/store'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const appStore = useAppStore()
 
-const handleClearVoice = () => {
+const tryListeningLoading = ref(false)
+const handleTryListening = async () => {
+  if (!appStore.voice) {
+    toast.warning('请选择一个声音')
+    return
+  }
+  if (!appStore.tryListeningText) {
+    toast.warning('试听文本不能为空')
+    return
+  }
+
+  tryListeningLoading.value = true
+  try {
+    const speech = await window.electron.edgeTtsSynthesizeToBase64({
+      text: appStore.tryListeningText,
+      voice: appStore.voice.ShortName,
+      options: {
+        rate: appStore.speed,
+      },
+    })
+    const audio = new Audio(`data:audio/mp3;base64,${speech}`)
+    audio.play()
+    toast.info('播放试听语音')
+  } catch (error) {
+    console.log('试听语音合成失败', error)
+    toast.error('试听语音合成失败，请检查网络')
+  } finally {
+    tryListeningLoading.value = false
+  }
+}
+const clearVoice = () => {
   appStore.voice = null
 }
 
@@ -57,26 +101,15 @@ const filteredVoicesList = computed(() => {
     (voice) => voice.FriendlyName.includes(appStore.language!) && voice.Gender === appStore.gender,
   )
 })
-const languageList = computed(() => {
-  return appStore.originalVoicesList
-    .map((voice) => voice.FriendlyName.split(' - ').pop()?.split(' (').shift())
-    .filter((language) => !!language)
-    .filter((language, index, arr) => arr.indexOf(language) === index)
-})
-const genderList = ref([
-  { label: '男性', value: 'Male' },
-  { label: '女性', value: 'Female' },
-  // { label: '中性', value: 'Neutral' },
-])
-const speedList = ref([
-  { label: '慢', value: '0.5' },
-  { label: '中', value: '1' },
-  { label: '快', value: '1.5' },
-])
 
 const fetchVoices = async () => {
-  appStore.originalVoicesList = await window.electron.getEdgeTtsVoiceList()
-  console.log('voicesList Updated', appStore.originalVoicesList)
+  try {
+    appStore.originalVoicesList = await window.electron.edgeTtsGetVoiceList()
+    console.log('EdgeTTS语音列表更新：', appStore.originalVoicesList)
+  } catch (error) {
+    console.log('获取EdgeTTS语音列表失败', error)
+    toast.error('获取EdgeTTS语音列表失败，请检查网络')
+  }
 }
 onMounted(async () => {
   await fetchVoices()

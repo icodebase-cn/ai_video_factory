@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { BrowserWindow, ipcMain, dialog, app } from 'electron'
 import { sqBulkInsertOrUpdate, sqDelete, sqInsert, sqQuery, sqUpdate } from './sqlite'
 import { ListFilesFromFolderParams, SelectFolderParams } from './types'
-import { getEdgeTtsVoiceList } from './tts'
+import { edgeTtsGetVoiceList, edgeTtsSynthesizeToBase64 } from './tts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -77,5 +77,8 @@ export default function initIPC(win: BrowserWindow) {
   })
 
   // 获取EdgeTTS语音列表
-  ipcMain.handle('get-edge-tts-voice-list', () => getEdgeTtsVoiceList())
+  ipcMain.handle('edge-tts-get-voice-list', () => edgeTtsGetVoiceList())
+
+  // 语音合成
+  ipcMain.handle('edge-tts-synthesize-to-base64', (_event, params) => edgeTtsSynthesizeToBase64(params))
 }

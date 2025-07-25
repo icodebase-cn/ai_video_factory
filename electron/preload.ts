@@ -1,6 +1,13 @@
 import { ipcRenderer, contextBridge } from 'electron'
-import { queryParams, insertParams, updateParams, deleteParams } from './sqlite/types'
+import {
+  QueryParams,
+  InsertParams,
+  UpdateParams,
+  DeleteParams,
+  BulkInsertOrUpdateParams,
+} from './sqlite/types'
 import { ListFilesFromFolderParams, SelectFolderParams } from './types'
+import { edgeTtsSynthesizeToBase64Params } from './tts/types'
 
 // --------- 向界面渲染进程暴露某些API ---------
 
@@ -35,13 +42,16 @@ contextBridge.exposeInMainWorld('electron', {
   selectFolder: (params: SelectFolderParams) => ipcRenderer.invoke('select-folder', params),
   listFilesFromFolder: (params: ListFilesFromFolderParams) =>
     ipcRenderer.invoke('list-files-from-folder', params),
-  getEdgeTtsVoiceList: () => ipcRenderer.invoke('get-edge-tts-voice-list'),
+  edgeTtsGetVoiceList: () => ipcRenderer.invoke('edge-tts-get-voice-list'),
+  edgeTtsSynthesizeToBase64: (params: edgeTtsSynthesizeToBase64Params) =>
+    ipcRenderer.invoke('edge-tts-synthesize-to-base64', params),
 })
 
 contextBridge.exposeInMainWorld('sqlite', {
-  query: (params: queryParams) => ipcRenderer.invoke('sqlite-query', params),
-  insert: (params: insertParams) => ipcRenderer.invoke('sqlite-insert', params),
-  update: (params: updateParams) => ipcRenderer.invoke('sqlite-update', params),
-  delete: (params: deleteParams) => ipcRenderer.invoke('sqlite-delete', params),
-  bulkInsertOrUpdate: (params: any) => ipcRenderer.invoke('sqlite-bulk-insert-or-update', params),
+  query: (params: QueryParams) => ipcRenderer.invoke('sqlite-query', params),
+  insert: (params: InsertParams) => ipcRenderer.invoke('sqlite-insert', params),
+  update: (params: UpdateParams) => ipcRenderer.invoke('sqlite-update', params),
+  delete: (params: DeleteParams) => ipcRenderer.invoke('sqlite-delete', params),
+  bulkInsertOrUpdate: (params: BulkInsertOrUpdateParams) =>
+    ipcRenderer.invoke('sqlite-bulk-insert-or-update', params),
 })

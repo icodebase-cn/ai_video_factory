@@ -191,6 +191,11 @@ async function request(options: string | RequestOptions): Promise<Response> {
 
       // 错误处理
       req.on('error', (error: Error) => {
+        // 清除超时定时器
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+          timeoutId = null
+        }
         reject(new RequestError(`Network error: ${error.message}`))
       })
 

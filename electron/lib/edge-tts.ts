@@ -1,11 +1,43 @@
+import Crypto from 'crypto'
+import axios from 'axios'
 import WebSocket from 'ws'
 import { writeFileSync } from 'fs'
-import request from './request'
 
 export const Constants = {
   TRUSTED_CLIENT_TOKEN: '6A5AA1D4EAFF4E9FB37E23D68491D6F4',
   WSS_URL: 'wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1',
   VOICES_URL: 'https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list',
+}
+
+export const CHROMIUM_FULL_VERSION = '130.0.2849.68'
+export const CHROMIUM_MAJOR_VERSION = CHROMIUM_FULL_VERSION.split('.', 1)[0]
+export const SEC_MS_GEC_VERSION = `1-${CHROMIUM_FULL_VERSION}`
+
+export const WIN_EPOCH = 11644473600
+export const S_TO_NS = 1e9
+
+export const BASE_HEADERS = {
+  'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${CHROMIUM_MAJOR_VERSION}.0.0.0 Safari/537.36 Edg/${CHROMIUM_MAJOR_VERSION}.0.0.0`,
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Accept-Language': 'en-US,en;q=0.9',
+}
+
+export const WSS_HEADERS = {
+  ...BASE_HEADERS,
+  Pragma: 'no-cache',
+  'Cache-Control': 'no-cache',
+  Origin: 'chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold',
+}
+
+export const VOICE_HEADERS = {
+  ...BASE_HEADERS,
+  Authority: 'speech.platform.bing.com',
+  'Sec-CH-UA': `" Not;A Brand";v="99", "Microsoft Edge";v="${CHROMIUM_MAJOR_VERSION}", "Chromium";v="${CHROMIUM_MAJOR_VERSION}"`,
+  'Sec-CH-UA-Mobile': '?0',
+  Accept: '*/*',
+  'Sec-Fetch-Site': 'none',
+  'Sec-Fetch-Mode': 'cors',
+  'Sec-Fetch-Dest': 'empty',
 }
 
 export const AUDIO_FORMAT = 'audio-24khz-48kbitrate-mono-mp3'
@@ -24,7 +56,7 @@ export enum EdgeTTSGender {
   NEUTRAL = 'Neutral',
 }
 
-interface VoiceTag {
+export interface VoiceTag {
   ContentCategories: string[]
   VoicePersonalities: string[]
 }
@@ -66,12 +98,6 @@ export interface SynthesisResult {
   toFile(outputPath: string): Promise<void>
 
   /**
-   * Get raw audio buffer (identical to toBase64)
-   * @deprecated Use toBase64() instead
-   */
-  toRaw(): string
-
-  /**
    * Get audio buffer directly
    */
   getBuffer(): Buffer
@@ -90,6 +116,83 @@ export interface SynthesisResult {
    * Get audio size in bytes
    */
   getSize(): number
+}
+
+class SkewAdjustmentError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'SkewAdjustmentError'
+  }
+}
+
+export class DRM {
+  private static clockSkewSeconds: number = 0.0
+
+  /**
+   * Adjusts the clock skew in seconds.
+   */
+  static adjClockSkewSeconds(skewSeconds: number): void {
+    DRM.clockSkewSeconds += skewSeconds
+  }
+
+  /**
+   * Gets the current Unix timestamp with skew correction.
+   */
+  static getUnixTimestamp(): number {
+    return Date.now() / 1000 + DRM.clockSkewSeconds
+  }
+
+  /**
+   * Parses an RFC 2616 date string into a Unix timestamp.
+   */
+  static parseRfc2616Date(date: string): number | null {
+    const parsed = new Date(date)
+    return isNaN(parsed.getTime()) ? null : parsed.getTime() / 1000
+  }
+
+  /**
+   * Handles client response error and adjusts clock skew accordingly.
+   */
+  static handleClientResponseError(error: any): void {
+    const headers = error.headers
+    if (!headers) {
+      throw new SkewAdjustmentError('No server date in headers.')
+    }
+
+    const serverDate: string | undefined = headers.get ? headers.get('Date') : headers['date']
+    if (!serverDate || typeof serverDate !== 'string') {
+      throw new SkewAdjustmentError('No server date in headers.')
+    }
+
+    const serverTimestamp = DRM.parseRfc2616Date(serverDate)
+    if (serverTimestamp === null) {
+      throw new SkewAdjustmentError(`Failed to parse server date: ${serverDate}`)
+    }
+
+    const clientTimestamp = DRM.getUnixTimestamp()
+    DRM.adjClockSkewSeconds(serverTimestamp - clientTimestamp)
+  }
+
+  /**
+   * Generates the Sec-MS-GEC token.
+   */
+  static generateSecMsGec(): string {
+    let ticks = DRM.getUnixTimestamp()
+
+    // Convert to Windows file time
+    ticks += WIN_EPOCH
+
+    // Round down to nearest 5 minutes (300 seconds)
+    ticks -= ticks % 300
+
+    // Convert to 100-nanosecond intervals
+    ticks *= S_TO_NS / 100
+
+    const strToHash = `${Math.floor(ticks)}${Constants.TRUSTED_CLIENT_TOKEN}`
+    const hash = Crypto.createHash('sha256')
+    hash.update(strToHash, 'ascii')
+    return hash.digest('hex').toUpperCase()
+  }
 }
 
 class SynthesisResultImpl implements SynthesisResult {
@@ -118,10 +221,6 @@ class SynthesisResultImpl implements SynthesisResult {
     }
   }
 
-  toRaw(): string {
-    return this.toBase64()
-  }
-
   getBuffer(): Buffer {
     return this.audioBuffer
   }
@@ -145,10 +244,13 @@ class SynthesisResultImpl implements SynthesisResult {
 
 export class EdgeTTS {
   async getVoices(): Promise<EdgeTTSVoice[]> {
-    const response = await request(
+    const response = await axios.get(
       `${Constants.VOICES_URL}?trustedclienttoken=${Constants.TRUSTED_CLIENT_TOKEN}`,
+      {
+        headers: VOICE_HEADERS,
+      },
     )
-    const voices: EdgeTTSVoice[] = await response.json()
+    const voices: EdgeTTSVoice[] = response.data
     return voices.map((voice) => ({
       Name: voice.Name,
       ShortName: voice.ShortName,
@@ -206,7 +308,13 @@ export class EdgeTTS {
       const audioStream: Buffer[] = []
       const requestId = this.generateUUID()
       const ws = new WebSocket(
-        `${Constants.WSS_URL}?trustedclienttoken=${Constants.TRUSTED_CLIENT_TOKEN}&ConnectionId=${requestId}`,
+        `${Constants.WSS_URL}?trustedclienttoken=${Constants.TRUSTED_CLIENT_TOKEN}` +
+          `&Sec-MS-GEC=${DRM.generateSecMsGec()}` +
+          `&Sec-MS-GEC-Version=${SEC_MS_GEC_VERSION}` +
+          `&ConnectionId=${requestId}`,
+        {
+          headers: WSS_HEADERS,
+        },
       )
 
       const ssmlText = this.getSSML(text, voice, options)

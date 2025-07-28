@@ -3,6 +3,9 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - bufferutil
   - electron
   - esbuild
+  - ffmpeg-static
+  - utf-8-validate
   - vue-demi

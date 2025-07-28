@@ -5,6 +5,7 @@ import { BrowserWindow, ipcMain, dialog, app } from 'electron'
 import { sqBulkInsertOrUpdate, sqDelete, sqInsert, sqQuery, sqUpdate } from './sqlite'
 import { ListFilesFromFolderParams, SelectFolderParams } from './types'
 import { edgeTtsGetVoiceList, edgeTtsSynthesizeToBase64 } from './tts'
+import './ffmpeg'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -80,5 +81,7 @@ export default function initIPC(win: BrowserWindow) {
   ipcMain.handle('edge-tts-get-voice-list', () => edgeTtsGetVoiceList())
 
   // 语音合成
-  ipcMain.handle('edge-tts-synthesize-to-base64', (_event, params) => edgeTtsSynthesizeToBase64(params))
+  ipcMain.handle('edge-tts-synthesize-to-base64', (_event, params) =>
+    edgeTtsSynthesizeToBase64(params),
+  )
 }

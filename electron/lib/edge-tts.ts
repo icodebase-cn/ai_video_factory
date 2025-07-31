@@ -2,6 +2,7 @@ import Crypto from 'crypto'
 import axios from 'axios'
 import WebSocket from 'ws'
 import { writeFileSync } from 'fs'
+import { stringifySync as subtitleStringifySync, type NodeList as SubtitleNodeList } from 'subtitle'
 
 export const Constants = {
   TRUSTED_CLIENT_TOKEN: '6A5AA1D4EAFF4E9FB37E23D68491D6F4',
@@ -85,6 +86,16 @@ export interface AudioMetadata {
   channels: number
 }
 
+export interface WordBoundary {
+  Offset: number
+  Duration: number
+  text: {
+    Text: string
+    Length: number
+    BoundaryType: string
+  }
+}
+
 export interface SynthesisResult {
   /**
    * Convert audio data to Base64 string
@@ -116,6 +127,11 @@ export interface SynthesisResult {
    * Get audio size in bytes
    */
   getSize(): number
+
+  /**
+   * Get Caption Srt String
+   */
+  getCaptionSrtString(): string
 }
 
 class SkewAdjustmentError extends Error {
@@ -196,9 +212,11 @@ export class DRM {
 }
 
 class SynthesisResultImpl implements SynthesisResult {
+  private readonly wordList: WordBoundary[]
   private readonly audioBuffer: Buffer
 
-  constructor(audioData: Buffer[]) {
+  constructor(wordList: WordBoundary[], audioData: Buffer[]) {
+    this.wordList = wordList
     this.audioBuffer = Buffer.concat(audioData)
   }
 
@@ -239,6 +257,48 @@ class SynthesisResultImpl implements SynthesisResult {
 
   getSize(): number {
     return this.audioBuffer.length
+  }
+
+  getCaptionSrtString(): string {
+    let srtCaptionList: SubtitleNodeList = []
+    let currentSentence: WordBoundary[] = []
+
+    function pushSrtNode() {
+      const firstWord = currentSentence[0]
+      const lastWord = currentSentence[currentSentence.length - 1]
+      srtCaptionList.push({
+        type: 'cue',
+        data: {
+          start: firstWord.Offset / 10000,
+          end: (lastWord.Offset + lastWord.Duration) / 10 ** 4,
+          text: currentSentence.map((sentence) => sentence.text.Text).join(''),
+        },
+      })
+    }
+
+    this.wordList.forEach((word, index) => {
+      const tooLong = () =>
+        currentSentence.map((sentence) => sentence.text.Text).join('').length > 24
+
+      const vocieGap = () =>
+        word.Offset - (this.wordList[index - 1].Offset + this.wordList[index - 1].Duration) >
+        100 * 10 ** 4
+
+      if (index !== 0 && (tooLong() || vocieGap())) {
+        pushSrtNode()
+        currentSentence = [word]
+        return
+      }
+
+      currentSentence.push(word)
+    })
+
+    if (currentSentence.length) {
+      pushSrtNode()
+      currentSentence = []
+    }
+
+    return subtitleStringifySync(srtCaptionList, { format: 'SRT' })
   }
 }
 
@@ -306,6 +366,7 @@ export class EdgeTTS {
   ): Promise<SynthesisResult> {
     return new Promise((resolve, reject) => {
       const audioStream: Buffer[] = []
+      const wordList: WordBoundary[] = []
       const requestId = this.generateUUID()
       const ws = new WebSocket(
         `${Constants.WSS_URL}?trustedclienttoken=${Constants.TRUSTED_CLIENT_TOKEN}` +
@@ -328,11 +389,12 @@ export class EdgeTTS {
       })
 
       ws.on('message', (data: Buffer) => {
+        this.processCaptionData(data, wordList)
         this.processAudioData(data, audioStream, ws)
       })
 
       ws.on('close', () => {
-        const result = new SynthesisResultImpl(audioStream)
+        const result = new SynthesisResultImpl(wordList, audioStream)
         resolve(result)
       })
 
@@ -387,6 +449,22 @@ export class EdgeTTS {
       `X-Timestamp:${timestamp}\r\n` +
       `Path:ssml\r\n\r\n${ssmlText}`
     )
+  }
+
+  private processCaptionData(data: Buffer, wordBoundaryList: WordBoundary[]): void {
+    const needle = Buffer.from('Path:audio.metadata\r\n')
+
+    const startIndex = data.indexOf(needle)
+
+    if (startIndex !== -1) {
+      const metaData = JSON.parse(
+        data.subarray(startIndex + needle.length).toString('utf-8'),
+      )?.Metadata
+
+      if (metaData[0]?.Type === 'WordBoundary') {
+        wordBoundaryList.push(metaData[0].Data)
+      }
+    }
   }
 
   private processAudioData(data: Buffer, audioStream: Buffer[], ws: WebSocket): void {

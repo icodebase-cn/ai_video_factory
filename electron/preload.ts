@@ -45,6 +45,7 @@ contextBridge.exposeInMainWorld('electron', {
   edgeTtsGetVoiceList: () => ipcRenderer.invoke('edge-tts-get-voice-list'),
   edgeTtsSynthesizeToBase64: (params: edgeTtsSynthesizeToBase64Params) =>
     ipcRenderer.invoke('edge-tts-synthesize-to-base64', params),
+  renderVideo: (params: any) => ipcRenderer.invoke('render-video', params),
 })
 
 contextBridge.exposeInMainWorld('sqlite', {

@@ -1,7 +1,7 @@
 {
   "name": "short-video-factory",
   "description": "短视频工厂，一键生成产品营销与泛内容短视频，AI批量自动剪辑",
-  "version": "0.4.0",
+  "version": "0.5.1",
   "author": {
     "name": "YILS",
     "developer": "YILS",
@@ -20,6 +20,7 @@
     "axios": "^1.11.0",
     "better-sqlite3": "9.6.0",
     "ffmpeg-static": "^5.2.0",
+    "subtitle": "4.2.2-alpha.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {

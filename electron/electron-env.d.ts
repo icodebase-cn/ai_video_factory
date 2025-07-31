@@ -37,6 +37,9 @@ interface Window {
     edgeTtsSynthesizeToBase64: (
       params: import('./tts/types').edgeTtsSynthesizeToBase64Params,
     ) => Promise<string>
+    renderVideo: (
+      params: import('./ffmpeg/types').RenderVideoParams,
+    ) => Promise<import('./ffmpeg/types').ExecuteFFmpegResult>
   }
   sqlite: {
     query: (param: import('./sqlite/types').QueryParams) => Promise<any>

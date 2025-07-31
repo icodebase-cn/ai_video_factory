@@ -35,8 +35,11 @@ interface Window {
     ) => Promise<import('./types').ListFilesFromFolderRecord[]>
     edgeTtsGetVoiceList: () => Promise<import('./lib/edge-tts').EdgeTTSVoice[]>
     edgeTtsSynthesizeToBase64: (
-      params: import('./tts/types').edgeTtsSynthesizeToBase64Params,
+      params: import('./tts/types').edgeTtsSynthesizeCommonParams,
     ) => Promise<string>
+    edgeTtsSynthesizeToFile: (
+      params: import('./tts/types').edgeTtsSynthesizeToFileParams,
+    ) => Promise<void>
     renderVideo: (
       params: import('./ffmpeg/types').RenderVideoParams,
     ) => Promise<import('./ffmpeg/types').ExecuteFFmpegResult>

@@ -1,7 +1,7 @@
 import Crypto from 'crypto'
 import axios from 'axios'
 import WebSocket from 'ws'
-import { writeFileSync } from 'fs'
+import { writeFileSync } from 'node:fs'
 import { stringifySync as subtitleStringifySync, type NodeList as SubtitleNodeList } from 'subtitle'
 
 export const Constants = {

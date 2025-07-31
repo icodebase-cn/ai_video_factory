@@ -1,5 +1,5 @@
-const path = require('path')
-const fs = require('fs')
+const path = require('node:path')
+const fs = require('node:fs')
 
 const Arch = {
   0: 'ia32',
@@ -16,7 +16,7 @@ function copyNativeFileSync(sourceDir, targetDir) {
     throw new Error(`Native binary not found at: ${sourcePath}`)
   }
   if (!fs.existsSync(path.join(__dirname, `../dist-native`))) {
-    fs.mkdirSync(path.dirname(targetPath))
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true })
   }
   fs.copyFileSync(sourcePath, targetPath)
 }

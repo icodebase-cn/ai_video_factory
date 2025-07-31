@@ -7,7 +7,8 @@ import {
   BulkInsertOrUpdateParams,
 } from './sqlite/types'
 import { ListFilesFromFolderParams, SelectFolderParams } from './types'
-import { edgeTtsSynthesizeToBase64Params } from './tts/types'
+import { edgeTtsSynthesizeCommonParams } from './tts/types'
+import { RenderVideoParams } from './ffmpeg/types'
 
 // --------- 向界面渲染进程暴露某些API ---------
 
@@ -43,9 +44,11 @@ contextBridge.exposeInMainWorld('electron', {
   listFilesFromFolder: (params: ListFilesFromFolderParams) =>
     ipcRenderer.invoke('list-files-from-folder', params),
   edgeTtsGetVoiceList: () => ipcRenderer.invoke('edge-tts-get-voice-list'),
-  edgeTtsSynthesizeToBase64: (params: edgeTtsSynthesizeToBase64Params) =>
+  edgeTtsSynthesizeToBase64: (params: edgeTtsSynthesizeCommonParams) =>
     ipcRenderer.invoke('edge-tts-synthesize-to-base64', params),
-  renderVideo: (params: any) => ipcRenderer.invoke('render-video', params),
+  edgeTtsSynthesizeToFile: (params: edgeTtsSynthesizeCommonParams) =>
+    ipcRenderer.invoke('edge-tts-synthesize-to-file', params),
+  renderVideo: (params: RenderVideoParams) => ipcRenderer.invoke('render-video', params),
 })
 
 contextBridge.exposeInMainWorld('sqlite', {

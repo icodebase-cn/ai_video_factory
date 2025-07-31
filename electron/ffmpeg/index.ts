@@ -1,7 +1,8 @@
-import fs from 'fs'
+import fs from 'node:fs'
 import os from 'os'
 import { spawn } from 'child_process'
 import { ExecuteFFmpegResult, RenderVideoParams } from './types'
+import { getTempTtsVoiceFilePath } from '../tts'
 const ffmpegPath = require('ffmpeg-static') as string
 
 // async function test() {
@@ -39,8 +40,14 @@ export async function renderVideo(params: RenderVideoParams) {
     })
 
     // 添加音频输入
-    args.push('-i', `${audioFiles.voice}`) // 语音音轨
-    args.push('-i', `${audioFiles.bgm}`) // 背景音乐
+    // 语音音轨
+    if (audioFiles?.voice) {
+      args.push('-i', `${audioFiles.voice}`)
+    } else {
+      args.push('-i', `${getTempTtsVoiceFilePath()}`)
+    }
+    // 背景音乐
+    audioFiles?.bgm && args.push('-i', `${audioFiles.bgm}`)
 
     // 构建复杂滤镜
     const filters = []

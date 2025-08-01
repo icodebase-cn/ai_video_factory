@@ -3,7 +3,7 @@
     <v-sheet class="h-full p-2 flex flex-col" border rounded>
       <div class="flex gap-2 mb-2">
         <v-text-field
-          :model-value="appStore.videoAssetsFolder"
+          v-model="appStore.videoAssetsFolder"
           label="分镜视频素材文件夹"
           density="compact"
           hide-details
@@ -62,7 +62,7 @@ const handleSelectFolder = async () => {
     title: '选择分镜素材文件夹',
     defaultPath: appStore.videoAssetsFolder,
   })
-  console.log('用户选择的文件夹绝对路径：', folderPath)
+  console.log('用户选择分镜素材文件夹，绝对路径：', folderPath)
   if (folderPath) {
     appStore.videoAssetsFolder = folderPath
     refreshAssets()
@@ -100,6 +100,11 @@ const refreshAssets = async () => {
   }
 }
 refreshAssets()
+
+// 获取视频分镜随机素材片段
+const getVideoSegments = async () => {}
+
+defineExpose({ getVideoSegments })
 </script>
 
 <style lang="scss" scoped>

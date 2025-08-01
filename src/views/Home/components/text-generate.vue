@@ -98,7 +98,7 @@ const abortController = ref<AbortController | null>(null)
 const handleGenerate = async () => {
   if (!appStore.prompt) {
     toast.warning('提示词不能为空')
-    return
+    throw new Error('提示词不能为空')
   }
 
   const openai = createOpenAI({
@@ -132,6 +132,7 @@ const handleGenerate = async () => {
         `生成失败，请检查大模型配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
       )
     }
+    throw error
   } finally {
     abortController.value = null
     isGenerating.value = false
@@ -186,6 +187,13 @@ const handleTestConfig = async () => {
     )
   }
 }
+
+// 获取当前文案
+const getCurrentOutputText = () => {
+  return outputText.value
+}
+
+defineExpose({ handleGenerate, getCurrentOutputText })
 </script>
 
 <style lang="scss" scoped>

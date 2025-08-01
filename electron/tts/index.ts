@@ -41,4 +41,9 @@ export async function edgeTtsSynthesizeToFile(params: edgeTtsSynthesizeToFilePar
     }
     fs.writeFileSync(srtPath, srtString)
   }
+
+  // [TODO] 返回音频时长
+  return {
+    duration: 0,
+  }
 }

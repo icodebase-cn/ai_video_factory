@@ -61,22 +61,29 @@ import { useToast } from 'vue-toastification'
 const toast = useToast()
 const appStore = useAppStore()
 
-const tryListeningLoading = ref(false)
-const handleTryListening = async () => {
+const configValid = () => {
   if (!appStore.voice) {
     toast.warning('请选择一个声音')
-    return
+    return false
   }
+
   if (!appStore.tryListeningText) {
     toast.warning('试听文本不能为空')
-    return
+    return false
   }
+
+  return true
+}
+
+const tryListeningLoading = ref(false)
+const handleTryListening = async () => {
+  if (!configValid()) return
 
   tryListeningLoading.value = true
   try {
     const speech = await window.electron.edgeTtsSynthesizeToBase64({
       text: appStore.tryListeningText,
-      voice: appStore.voice.ShortName,
+      voice: appStore.voice!.ShortName,
       options: {
         rate: appStore.speed,
       },
@@ -117,6 +124,27 @@ onMounted(async () => {
     appStore.voice = null
   }
 })
+
+const synthesizedSpeechToFile = async (option?: { withCaption?: boolean }) => {
+  if (!configValid()) throw new Error('TTS语音合成配置无效')
+
+  try {
+    await window.electron.edgeTtsSynthesizeToFile({
+      text: appStore.tryListeningText,
+      voice: appStore.voice!.ShortName,
+      options: {
+        rate: appStore.speed,
+      },
+      withCaption: option?.withCaption,
+    })
+  } catch (error) {
+    console.log('语音合成失败', error)
+    toast.error('语音合成失败，请检查网络')
+    throw error
+  }
+}
+
+defineExpose({ synthesizedSpeechToFile })
 </script>
 
 <style lang="scss" scoped>

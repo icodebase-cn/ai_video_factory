@@ -102,7 +102,9 @@ const refreshAssets = async () => {
 refreshAssets()
 
 // 获取视频分镜随机素材片段
-const getVideoSegments = async () => {}
+const getVideoSegments = async (options: { duration: number }) => {
+  
+}
 
 defineExpose({ getVideoSegments })
 </script>

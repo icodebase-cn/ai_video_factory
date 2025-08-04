@@ -20,6 +20,7 @@
     "axios": "^1.11.0",
     "better-sqlite3": "9.6.0",
     "ffmpeg-static": "^5.2.0",
+    "music-metadata": "^11.7.3",
     "subtitle": "4.2.2-alpha.0",
     "ws": "^8.18.3"
   },

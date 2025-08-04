@@ -49,14 +49,21 @@ const handleRenderVideo = async () => {
       return
     }
 
-    toast.info('即将开发完成，敬请期待')
-    return
-
     // TTS合成语音
-    await TtsControlInstance.value?.synthesizedSpeechToFile({ withCaption: true })
+    const ttsResult = await TtsControlInstance.value?.synthesizedSpeechToFile({ withCaption: true })
+    if (ttsResult?.duration === undefined) {
+      toast.warning('语音合成失败，音频文件损坏')
+      return
+    }
+    if (ttsResult?.duration === 0) {
+      toast.warning('语音时长为0秒，可能文案为空')
+      return
+    }
 
     // 获取视频片段
-    // const videoSegments = VideoManageInstance.value?.getVideoSegments()
+    const videoSegments = VideoManageInstance.value?.getVideoSegments({
+      duration: ttsResult.duration,
+    })
 
     // await window.electron.renderVideo({})
   } catch (error) {

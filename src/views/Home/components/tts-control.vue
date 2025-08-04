@@ -129,7 +129,7 @@ const synthesizedSpeechToFile = async (option?: { withCaption?: boolean }) => {
   if (!configValid()) throw new Error('TTS语音合成配置无效')
 
   try {
-    await window.electron.edgeTtsSynthesizeToFile({
+    const result = await window.electron.edgeTtsSynthesizeToFile({
       text: appStore.tryListeningText,
       voice: appStore.voice!.ShortName,
       options: {
@@ -137,6 +137,7 @@ const synthesizedSpeechToFile = async (option?: { withCaption?: boolean }) => {
       },
       withCaption: option?.withCaption,
     })
+    return result
   } catch (error) {
     console.log('语音合成失败', error)
     toast.error('语音合成失败，请检查网络')

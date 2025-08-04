@@ -18,7 +18,7 @@
             size="x-large"
             color="deep-purple-accent-3"
             prepend-icon="mdi-rocket-launch"
-            @click="onRenderVideo"
+            @click="emit('renderVideo')"
           >
             开始合成
           </v-btn>
@@ -104,8 +104,8 @@ import { useAppStore } from '@/store'
 
 const appStore = useAppStore()
 
-defineEmits<{
-  renderVideo(): void
+const emit = defineEmits<{
+  (e: 'renderVideo'): void
 }>()
 
 // 配置合成选项

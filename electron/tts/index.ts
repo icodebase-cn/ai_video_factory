@@ -2,7 +2,12 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { app } from 'electron'
 import { EdgeTTS } from '../lib/edge-tts'
-import { edgeTtsSynthesizeCommonParams, edgeTtsSynthesizeToFileParams } from './types'
+import { parseBuffer } from 'music-metadata'
+import {
+  EdgeTtsSynthesizeCommonParams,
+  EdgeTtsSynthesizeToFileParams,
+  EdgeTtsSynthesizeToFileResult,
+} from './types'
 
 const edgeTts = new EdgeTTS()
 
@@ -14,13 +19,15 @@ export function edgeTtsGetVoiceList() {
   return edgeTts.getVoices()
 }
 
-export async function edgeTtsSynthesizeToBase64(params: edgeTtsSynthesizeCommonParams) {
+export async function edgeTtsSynthesizeToBase64(params: EdgeTtsSynthesizeCommonParams) {
   const { text, voice, options } = params
   const result = await edgeTts.synthesize(text, voice, options)
   return result.toBase64()
 }
 
-export async function edgeTtsSynthesizeToFile(params: edgeTtsSynthesizeToFileParams) {
+export async function edgeTtsSynthesizeToFile(
+  params: EdgeTtsSynthesizeToFileParams,
+): Promise<EdgeTtsSynthesizeToFileResult> {
   const { text, voice, options, withCaption } = params
   const result = await edgeTts.synthesize(text, voice, options)
 
@@ -42,8 +49,8 @@ export async function edgeTtsSynthesizeToFile(params: edgeTtsSynthesizeToFilePar
     fs.writeFileSync(srtPath, srtString)
   }
 
-  // [TODO] 返回音频时长
+  const metadata = await parseBuffer(result.getBuffer())
   return {
-    duration: 0,
+    duration: metadata.format.duration,
   }
 }

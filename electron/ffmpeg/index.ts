@@ -5,7 +5,9 @@ import { ExecuteFFmpegResult, RenderVideoParams } from './types'
 import { getTempTtsVoiceFilePath } from '../tts'
 import path from 'node:path'
 import { generateUniqueFileName } from '../lib/tools'
-const ffmpegPath = require('ffmpeg-static') as string
+
+const isWindows = process.platform === 'win32'
+const ffmpegPath = isWindows ? require('ffmpeg-static') : ('ffmpeg' as string)
 
 // async function test() {
 //   try {
@@ -153,7 +155,7 @@ export async function executeFFmpeg(
     abortSignal?: AbortSignal
   },
 ): Promise<ExecuteFFmpegResult> {
-  validateExecutables()
+  isWindows && validateExecutables()
 
   return new Promise((resolve, reject) => {
     const defaultOptions = {

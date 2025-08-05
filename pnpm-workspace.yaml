@@ -1,11 +1,11 @@
 ignoredBuiltDependencies:
   - better-sqlite3
+  - ffmpeg-static
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - bufferutil
   - electron
   - esbuild
-  - ffmpeg-static
   - utf-8-validate
   - vue-demi

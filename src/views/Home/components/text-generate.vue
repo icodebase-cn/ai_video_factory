@@ -184,7 +184,7 @@ const handleTestConfig = async () => {
   try {
     const result = await generateText({
       model: openai(config.value.modelName),
-      prompt: 'Hello world',
+      prompt: 'Hello',
     })
     console.log(`result`, result)
     testStatus.value = TestStatusEnum.SUCCESS

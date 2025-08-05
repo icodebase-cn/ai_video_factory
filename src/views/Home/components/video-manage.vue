@@ -18,9 +18,9 @@
       <div class="flex-1 h-0 w-full border">
         <div
           v-if="videoAssets.length"
-          class="w-full h-full overflow-y-auto grid grid-cols-3 gap-2 p-2"
+          class="w-full h-full max-h-[200px] overflow-y-auto grid grid-cols-3 gap-2 p-2"
         >
-          <div v-for="(item, index) in videoAssets" :key="index" class="w-full h-full max-h-[200px]">
+          <div v-for="(item, index) in videoAssets" :key="index" class="w-full h-full">
             <VideoAutoPreview
               :asset="item"
               @loaded="

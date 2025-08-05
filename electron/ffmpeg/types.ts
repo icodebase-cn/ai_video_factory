@@ -2,7 +2,7 @@ export interface RenderVideoParams {
   videoFiles: string[]
   timeRanges: [string, string][]
   audioFiles?: { voice?: string; bgm?: string }
-  subtitleFile: string
+  subtitleFile?: string
   outputSize: { width: number; height: number }
   outputPath: string
   outputDuration?: string

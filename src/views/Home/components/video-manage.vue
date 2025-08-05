@@ -20,8 +20,15 @@
           v-if="videoAssets.length"
           class="w-full h-full overflow-y-auto grid grid-cols-3 gap-2 p-2"
         >
-          <div v-for="(item, index) in videoAssets" :key="index" class="w-full h-full">
-            <VideoAutoPreview :asset="item" />
+          <div v-for="(item, index) in videoAssets" :key="index" class="w-full h-full max-h-[200px]">
+            <VideoAutoPreview
+              :asset="item"
+              @loaded="
+                (info) => {
+                  videoInfoList[index] = info
+                }
+              "
+            />
           </div>
         </div>
         <v-empty-state
@@ -47,11 +54,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ListFilesFromFolderRecord } from '~/electron/types'
-import { useToast } from 'vue-toastification'
+import { ref, toRaw } from 'vue'
 import { useAppStore } from '@/store'
-import { ref } from 'vue'
-import VideoAutoPreview from '@/components/video-auto-preview.vue'
+import { useToast } from 'vue-toastification'
+import { ListFilesFromFolderRecord } from '~/electron/types'
+import VideoAutoPreview, { VideoInfo } from '@/components/video-auto-preview.vue'
+import { RenderVideoParams } from '~/electron/ffmpeg/types'
+import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
@@ -102,8 +111,88 @@ const refreshAssets = async () => {
 refreshAssets()
 
 // 获取视频分镜随机素材片段
-const getVideoSegments = async (options: { duration: number }) => {
-  
+const videoInfoList = ref<VideoInfo[]>([])
+const getVideoSegments = (options: { duration: number }) => {
+  // 判断素材库是否满足时长要求
+  if (videoInfoList.value.reduce((pre, cur) => pre + cur.duration, 0) < options.duration) {
+    throw new Error('素材总时长不足')
+  }
+
+  // 搜集随机素材片段
+  const segments: Pick<RenderVideoParams, 'videoFiles' | 'timeRanges'> = {
+    videoFiles: [],
+    timeRanges: [],
+  }
+  const minSegmentDuration = 2
+  const maxSegmentDuration = 15
+
+  let currentTotalDuration = 0
+  let tempVideoAssets = structuredClone(toRaw(videoAssets.value))
+  const trunc3 = (n: number) => ((n * 1e3) << 0) / 1e3
+  while (currentTotalDuration < options.duration) {
+    // 如果素材库中没有剩余素材，时长还不够，重新来一轮
+    if (tempVideoAssets.length === 0) {
+      tempVideoAssets = structuredClone(toRaw(videoAssets.value))
+      continue
+    }
+
+    // 获取一个随机素材以及相关信息
+    const randomAsset = random.choice(tempVideoAssets)!
+    const randomAssetIndex = tempVideoAssets.indexOf(randomAsset)
+    const randomAssetInfo = videoInfoList.value[randomAssetIndex]
+
+    // 删除已选素材
+    tempVideoAssets.splice(randomAssetIndex, 1)
+
+    // 如果素材时长小于最小片段时长，直接添加
+    if (randomAssetInfo.duration < minSegmentDuration) {
+      segments.videoFiles.push(randomAsset.path)
+      segments.timeRanges.push([String(0), String(randomAssetInfo.duration)])
+      currentTotalDuration = trunc3(currentTotalDuration + randomAssetInfo.duration)
+      continue
+    }
+
+    // 如果素材时长大于最小片段时长，随机一个片段
+    let randomSegmentDuration = random.float(
+      minSegmentDuration,
+      Math.min(maxSegmentDuration, randomAssetInfo.duration),
+    )
+
+    // 处理最后一个片段时长超出规划时长情况
+    if (currentTotalDuration + randomSegmentDuration > options.duration) {
+      randomSegmentDuration = options.duration - currentTotalDuration
+    }
+
+    // 处理最后一个片段时长小于最小片段时长情况
+    if (options.duration - currentTotalDuration - randomSegmentDuration < minSegmentDuration) {
+      if (randomSegmentDuration + minSegmentDuration < randomAssetInfo.duration) {
+        randomSegmentDuration += minSegmentDuration
+      }
+    }
+
+    let randomSegmentStart = random.float(0, randomAssetInfo.duration - randomSegmentDuration)
+
+    segments.videoFiles.push(randomAsset.path)
+    segments.timeRanges.push([
+      String(trunc3(randomSegmentStart)),
+      String(trunc3(randomSegmentStart + randomSegmentDuration)),
+    ])
+    currentTotalDuration = trunc3(currentTotalDuration + randomSegmentDuration)
+
+    console.table([
+      {
+        素材名称: randomAsset.name,
+        素材时长: randomAssetInfo.duration,
+        片段开始: trunc3(randomSegmentStart),
+        片段时长: trunc3(randomSegmentDuration),
+      },
+    ])
+  }
+
+  console.log('随机素材片段总时长:', currentTotalDuration)
+  console.log('随机素材片段汇总:', segments)
+
+  return segments
 }
 
 defineExpose({ getVideoSegments })

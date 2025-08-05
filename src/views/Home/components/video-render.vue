@@ -8,7 +8,7 @@
       <div class="w-full h-0 flex-1 flex gap-10 items-center justify-center">
         <v-progress-circular
           color="primary"
-          model-value="0"
+          v-model="renderProgress"
           :size="96"
           :width="8"
         ></v-progress-circular>
@@ -31,6 +31,19 @@
               <v-card-text>
                 <div class="w-full flex gap-2 mb-4 items-center">
                   <v-text-field
+                    label="导出视频宽度"
+                    v-model="config.outputSize.width"
+                    hide-details
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="config.outputSize.height"
+                    label="导出视频高度"
+                    hide-details
+                    required
+                  ></v-text-field>
+                </div>
+                <div class="w-full flex gap-2 mb-4 items-center">
+                  <v-text-field
                     label="导出文件名"
                     v-model="config.outputFileName"
                     hide-details
@@ -39,7 +52,7 @@
                   ></v-text-field>
                   <v-text-field
                     class="w-[120px] flex-none"
-                    model-value=".mp4"
+                    v-model="config.outputFileExt"
                     label="导出格式"
                     hide-details
                     readonly
@@ -69,6 +82,7 @@
                     hide-details
                     readonly
                     required
+                    clearable
                   ></v-text-field>
                   <v-btn
                     class="!h-[46px]"
@@ -107,6 +121,11 @@ const appStore = useAppStore()
 const emit = defineEmits<{
   (e: 'renderVideo'): void
 }>()
+
+const renderProgress = ref(0)
+window.ipcRenderer.on('render-video-progress', (_, progress: number) => {
+  renderProgress.value = progress
+})
 
 // 配置合成选项
 const config = ref(structuredClone(toRaw(appStore.renderConfig)))

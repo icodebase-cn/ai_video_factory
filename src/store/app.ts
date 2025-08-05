@@ -2,6 +2,16 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { EdgeTTSVoice } from '~/electron/lib/edge-tts'
 
+enum RenderStatus {
+  None,
+  GenerateText,
+  SynthesizedSpeech,
+  SegmentVideo,
+  Rendering,
+  Completed,
+  Failed,
+}
+
 export const useAppStore = defineStore(
   'app',
   () => {
@@ -47,11 +57,17 @@ export const useAppStore = defineStore(
     // 合成配置
     const renderConfig = ref({
       bgmPath: '',
+      outputSize: { width: 1080, height: 1920 },
       outputPath: '',
       outputFileName: '',
+      outputFileExt: '.mp4',
     })
+    const renderStatus = ref(RenderStatus.None)
     const updateRenderConfig = (newConfig: typeof renderConfig.value) => {
       renderConfig.value = newConfig
+    }
+    const updateRenderStatus = (newStatus: RenderStatus) => {
+      renderStatus.value = newStatus
     }
 
     return {
@@ -73,7 +89,9 @@ export const useAppStore = defineStore(
       tryListeningText,
 
       renderConfig,
+      renderStatus,
       updateRenderConfig,
+      updateRenderStatus,
     }
   },
   {

@@ -1,83 +1,91 @@
 <template>
-  <div class="w-full h-full flex flex-col gap-2">
-    <v-sheet class="h-[200px] p-2 flex gap-2" border rounded>
-      <v-textarea
-        class="h-full"
-        v-model="appStore.prompt"
-        label="提示词"
-        counter
-        persistent-counter
-        no-resize
-      ></v-textarea>
-      <div class="flex flex-col gap-2">
-        <v-btn
-          v-if="!isGenerating"
-          prepend-icon="mdi-auto-fix"
-          color="deep-purple-accent-3"
-          stacked
-          @click="handleGenerate"
-        >
-          生成
-        </v-btn>
-        <v-btn v-else prepend-icon="mdi-stop" color="red" stacked @click="handleStopGenerate">
-          停止
-        </v-btn>
+  <div class="w-full h-full">
+    <v-form class="w-full h-full flex flex-col gap-2" :disabled="disabled">
+      <v-sheet class="h-[200px] p-2 flex gap-2" border rounded>
+        <v-textarea
+          class="h-full"
+          v-model="appStore.prompt"
+          label="提示词"
+          counter
+          persistent-counter
+          no-resize
+        ></v-textarea>
+        <div class="flex flex-col gap-2">
+          <v-btn
+            v-if="!isGenerating"
+            prepend-icon="mdi-auto-fix"
+            color="deep-purple-accent-3"
+            stacked
+            :disabled="disabled"
+            @click="handleGenerate"
+          >
+            生成
+          </v-btn>
+          <v-btn v-else prepend-icon="mdi-stop" color="red" stacked @click="handleStopGenerate">
+            停止
+          </v-btn>
 
-        <v-dialog v-model="configDialogShow" max-width="600" persistent>
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn v-bind="activatorProps"> 配置 </v-btn>
-          </template>
+          <v-dialog v-model="configDialogShow" max-width="600" persistent>
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn v-bind="activatorProps" :disabled="disabled"> 配置 </v-btn>
+            </template>
 
-          <v-card prepend-icon="mdi-text-box-edit-outline" title="配置大语言模型接口">
-            <v-card-text>
-              <v-text-field
-                label="模型名称"
-                v-model="config.modelName"
-                required
-                clearable
-              ></v-text-field>
-              <v-text-field
-                label="API 地址"
-                v-model="config.apiUrl"
-                required
-                clearable
-              ></v-text-field>
-              <v-text-field
-                label="API Key"
-                v-model="config.apiKey"
-                type="password"
-                required
-                clearable
-              ></v-text-field>
-              <small class="text-caption text-medium-emphasis">兼容任意 OpenAI 标准接口</small>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text="关闭" variant="plain" @click="handleCloseDialog"></v-btn>
-              <v-btn
-                color="success"
-                text="测试"
-                variant="tonal"
-                :loading="testStatus === TestStatusEnum.LOADING"
-                @click="handleTestConfig"
-              ></v-btn>
-              <v-btn color="primary" text="保存" variant="tonal" @click="handleSaveConfig"></v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-    </v-sheet>
-    <v-sheet class="h-0 flex-1 p-2" border rounded>
-      <v-textarea
-        class="h-full"
-        v-model="outputText"
-        label="输出文案（可编辑）"
-        counter
-        persistent-counter
-        no-resize
-      ></v-textarea>
-    </v-sheet>
+            <v-card prepend-icon="mdi-text-box-edit-outline" title="配置大语言模型接口">
+              <v-card-text>
+                <v-text-field
+                  label="模型名称"
+                  v-model="config.modelName"
+                  required
+                  clearable
+                ></v-text-field>
+                <v-text-field
+                  label="API 地址"
+                  v-model="config.apiUrl"
+                  required
+                  clearable
+                ></v-text-field>
+                <v-text-field
+                  label="API Key"
+                  v-model="config.apiKey"
+                  type="password"
+                  required
+                  clearable
+                ></v-text-field>
+                <small class="text-caption text-medium-emphasis">兼容任意 OpenAI 标准接口</small>
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text="关闭" variant="plain" @click="handleCloseDialog"></v-btn>
+                <v-btn
+                  color="success"
+                  text="测试"
+                  variant="tonal"
+                  :loading="testStatus === TestStatusEnum.LOADING"
+                  @click="handleTestConfig"
+                ></v-btn>
+                <v-btn
+                  color="primary"
+                  text="保存"
+                  variant="tonal"
+                  @click="handleSaveConfig"
+                ></v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
+      </v-sheet>
+      <v-sheet class="h-0 flex-1 p-2" border rounded>
+        <v-textarea
+          class="h-full"
+          v-model="outputText"
+          label="输出文案（可编辑）"
+          counter
+          persistent-counter
+          no-resize
+        ></v-textarea>
+      </v-sheet>
+    </v-form>
   </div>
 </template>
 
@@ -90,6 +98,10 @@ import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const appStore = useAppStore()
+
+defineProps<{
+  disabled?: boolean
+}>()
 
 // 生成文案
 const outputText = ref('')

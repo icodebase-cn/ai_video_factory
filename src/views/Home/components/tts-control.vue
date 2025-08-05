@@ -125,12 +125,12 @@ onMounted(async () => {
   }
 })
 
-const synthesizedSpeechToFile = async (option?: { withCaption?: boolean }) => {
+const synthesizedSpeechToFile = async (option: { text: string; withCaption?: boolean }) => {
   if (!configValid()) throw new Error('TTS语音合成配置无效')
 
   try {
     const result = await window.electron.edgeTtsSynthesizeToFile({
-      text: appStore.tryListeningText,
+      text: option.text,
       voice: appStore.voice!.ShortName,
       options: {
         rate: appStore.speed,

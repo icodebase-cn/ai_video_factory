@@ -72,6 +72,9 @@ importers:
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
+      random:
+        specifier: ^5.4.1
+        version: 5.4.1
       sass:
         specifier: ^1.89.2
         version: 1.89.2
@@ -2306,6 +2309,10 @@ packages:
   quick-lru@5.1.1:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
+
+  random@5.4.1:
+    resolution: {integrity: sha512-HtccRkYkAXCbj9bqsyGKGlicyeZ5AsQgs49fEuUO/BvrJ7WOQqXPjdg1CZrFjBkoT75ozrWlQXJ7TcXXLv2ISQ==}
+    engines: {node: '>=18'}
 
   rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
@@ -5211,6 +5218,8 @@ snapshots:
   quansync@0.2.10: {}
 
   quick-lru@5.1.1: {}
+
+  random@5.4.1: {}
 
   rc@1.2.8:
     dependencies:

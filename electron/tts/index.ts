@@ -10,9 +10,10 @@ import {
 } from './types'
 
 const edgeTts = new EdgeTTS()
+const setupTime = new Date().getTime()
 
 export function getTempTtsVoiceFilePath() {
-  return path.join(app.getPath('temp'), 'temp-tts-voice.mp3')
+  return path.join(app.getPath('temp'), `temp-tts-voice-${setupTime}.mp3`).replace(/\\/g, '/')
 }
 
 export function edgeTtsGetVoiceList() {

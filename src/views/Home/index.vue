@@ -28,6 +28,8 @@ import VideoRender from './components/video-render.vue'
 import { ref } from 'vue'
 import { useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
+import { ListFilesFromFolderRecord } from '~/electron/types'
+import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
@@ -37,8 +39,30 @@ const TextGenerateInstance = ref<InstanceType<typeof TextGenerate> | null>()
 const VideoManageInstance = ref<InstanceType<typeof VideoManage> | null>()
 const TtsControlInstance = ref<InstanceType<typeof TtsControl> | null>()
 const handleRenderVideo = async () => {
-  if (!appStore.renderConfig.outputFileName || !appStore.renderConfig.outputPath) {
-    toast.warning('请先配置合成导出的文件名和文件夹')
+  if (!appStore.renderConfig.outputFileName) {
+    toast.warning('请先配置导出文件名')
+    return
+  }
+  if (!appStore.renderConfig.outputPath) {
+    toast.warning('请先配置导出文件夹')
+    return
+  }
+  if (!appStore.renderConfig.outputSize?.width || !appStore.renderConfig.outputSize?.height) {
+    toast.warning('请先配置导出分辨率（宽高）')
+    return
+  }
+
+  let randomBgm: ListFilesFromFolderRecord | undefined = undefined
+  try {
+    const bgmList = await window.electron.listFilesFromFolder({
+      folderPath: appStore.renderConfig.bgmPath.replace(/\\/g, '/'),
+    })
+    if (bgmList.length > 0) {
+      randomBgm = random.choice(bgmList)
+    }
+  } catch (error) {
+    console.log('获取背景音乐列表失败', error)
+    toast.error('获取背景音乐列表失败，请检查文件夹是否存在')
   }
 
   try {
@@ -50,7 +74,10 @@ const handleRenderVideo = async () => {
     }
 
     // TTS合成语音
-    const ttsResult = await TtsControlInstance.value?.synthesizedSpeechToFile({ withCaption: true })
+    const ttsResult = await TtsControlInstance.value?.synthesizedSpeechToFile({
+      text,
+      withCaption: true,
+    })
     if (ttsResult?.duration === undefined) {
       toast.warning('语音合成失败，音频文件损坏')
       return
@@ -63,11 +90,28 @@ const handleRenderVideo = async () => {
     // 获取视频片段
     const videoSegments = VideoManageInstance.value?.getVideoSegments({
       duration: ttsResult.duration,
+    })!
+
+    await window.electron.renderVideo({
+      ...videoSegments,
+      audioFiles: {
+        bgm: randomBgm?.path,
+      },
+      outputSize: {
+        width: appStore.renderConfig.outputSize.width,
+        height: appStore.renderConfig.outputSize.height,
+      },
+      outputDuration: String(ttsResult.duration),
+      outputPath:
+        appStore.renderConfig.outputPath.replace(/\\/g, '/') +
+        '/' +
+        appStore.renderConfig.outputFileName +
+        appStore.renderConfig.outputFileExt,
     })
 
-    // await window.electron.renderVideo({})
+    toast.success('视频合成成功')
   } catch (error) {
-    console.log('合成视频失败:', error)
+    console.error('视频合成失败:', error)
     // @ts-ignore
     const errorMessage = error?.message || error?.error?.message
     toast.error(

@@ -3,6 +3,8 @@ import os from 'os'
 import { spawn } from 'child_process'
 import { ExecuteFFmpegResult, RenderVideoParams } from './types'
 import { getTempTtsVoiceFilePath } from '../tts'
+import path from 'node:path'
+import { generateUniqueFileName } from '../lib/tools'
 const ffmpegPath = require('ffmpeg-static') as string
 
 // async function test() {
@@ -15,21 +17,30 @@ const ffmpegPath = require('ffmpeg-static') as string
 // }
 // test()
 
-export async function renderVideo(params: RenderVideoParams) {
+export async function renderVideo(event: Electron.IpcMainInvokeEvent, params: RenderVideoParams) {
   try {
-    const {
-      videoFiles,
-      timeRanges,
-      audioFiles,
-      subtitleFile,
-      outputSize,
-      outputPath,
-      outputDuration,
-      abortSignal,
-    } = params
-    const onProgress = (progress: number) => {
-      console.log('ffmpeg progress', progress)
+    // 解构参数
+    const { videoFiles, timeRanges, outputSize, outputDuration, abortSignal } = params
+
+    // 音频默认配置
+    const audioFiles = params.audioFiles ?? {}
+    audioFiles.voice = params.audioFiles?.voice ?? getTempTtsVoiceFilePath()
+
+    // 字幕默认配置
+    const subtitleFile =
+      params.subtitleFile ??
+      path
+        .join(
+          path.dirname(getTempTtsVoiceFilePath()),
+          path.basename(getTempTtsVoiceFilePath(), '.mp3') + '.srt',
+        )
+        .replace(/\\/g, '/')
+
+    // 输出路径默认配置
+    if (!fs.existsSync(path.dirname(params.outputPath))) {
+      throw new Error(`输出路径不存在`)
     }
+    const outputPath = generateUniqueFileName(params.outputPath)
 
     // 构建args指令
     const args = []
@@ -41,11 +52,8 @@ export async function renderVideo(params: RenderVideoParams) {
 
     // 添加音频输入
     // 语音音轨
-    if (audioFiles?.voice) {
-      args.push('-i', `${audioFiles.voice}`)
-    } else {
-      args.push('-i', `${getTempTtsVoiceFilePath()}`)
-    }
+    args.push('-i', `${audioFiles.voice}`)
+
     // 背景音乐
     audioFiles?.bgm && args.push('-i', `${audioFiles.bgm}`)
 
@@ -61,26 +69,29 @@ export async function renderVideo(params: RenderVideoParams) {
 
       // 使用 trim、setpts、scale、pad 等操作处理视频
       filters.push(
-        `[${index}:v]trim=start=${start}:end=${end},setpts=PTS-STARTPTS,scale=${outputSize.width}:${outputSize.height}:force_original_aspect_ratio=decrease,pad=${outputSize.width}:${outputSize.height}:(ow-iw)/2:(oh-ih)/2[${streamLabel}]`,
+        `[${index}:v]trim=start=${start}:end=${end},setpts=PTS-STARTPTS,scale=${outputSize.width}:${outputSize.height}:force_original_aspect_ratio=decrease,pad=${outputSize.width}:${outputSize.height}:(ow-iw)/2:(oh-ih)/2,fps=30,format=yuv420p,setsar=1[${streamLabel}]`,
       )
     })
 
     // 拼接视频
-    const concatFilter = `[${videoStreams.join('][')}]concat=n=${videoFiles.length}:v=1:a=0[vout]`
-    filters.push(concatFilter)
+    filters.push(`[${videoStreams.join('][')}]concat=n=${videoFiles.length}:v=1:a=0[vout]`)
 
     // 在视频拼接后添加字幕
-    filters.push(`[vout]subtitles=${subtitleFile.replace(/\:/g, '\\\\\:')}[with_subs]`)
+    filters.push(`[vout]subtitles=${subtitleFile.replace(/\:/g, '\\\\:')}[with_subs]`)
 
-    // 音频处理：voice 放大音量，bgm 减小音量
+    // 音频处理：raw 静音 voice 放大音量，bgm 减小音量
     filters.push(`[${videoFiles.length}:a]volume=2[voice]`) // voice 音量放大
-    filters.push(`[${videoFiles.length + 1}:a]volume=0.5[bgm]`) // bgm 音量缩小
+    audioFiles?.bgm && filters.push(`[${videoFiles.length + 1}:a]volume=0.5[bgm]`) // bgm 音量缩小
 
     // 混合音频
-    filters.push(`[voice][bgm]amix=inputs=2:duration=longest[aout]`)
+    if (audioFiles?.bgm) {
+      filters.push(`[voice][bgm]amix=inputs=2:duration=longest[aout]`)
+    } else {
+      filters.push(`[voice]amix=inputs=1:duration=longest[aout]`)
+    }
 
     // 设置 filter_complex
-    args.push('-filter_complex', filters.join(';'))
+    args.push('-filter_complex', `${filters.join(';')}`)
 
     // 映射输出流
     args.push('-map', '[with_subs]', '-map', '[aout]')
@@ -108,8 +119,24 @@ export async function renderVideo(params: RenderVideoParams) {
       outputPath,
     )
 
+    // 打印命令
+    // console.log('执行命令:', args.join(' '))
+
+    // 进度回调
+    const onProgress = (progress: number) => {
+      event.sender.send('render-video-progress', progress)
+    }
+
     // 执行命令
     const result = await executeFFmpeg(args, { onProgress, abortSignal })
+
+    // 移除临时文件
+    if (fs.existsSync(audioFiles.voice)) {
+      fs.unlinkSync(audioFiles.voice)
+    }
+    if (fs.existsSync(subtitleFile)) {
+      fs.unlinkSync(subtitleFile)
+    }
 
     // 返回结果
     return result
@@ -145,17 +172,18 @@ export async function executeFFmpeg(
       stdout += data.toString()
       // 处理进度信息
       progress = parseProgress(data.toString()) ?? 0
-      options?.onProgress?.(progress)
+      options?.onProgress?.(progress >= 100 ? 99 : progress)
     })
 
     child.stderr.on('data', (data) => {
       stderr += data.toString()
       // 实时输出进度信息
-      options?.onProgress?.(progress)
+      options?.onProgress?.(progress >= 100 ? 99 : progress)
     })
 
     child.on('close', (code) => {
       if (code === 0) {
+        options?.onProgress?.(100)
         resolve({ stdout, stderr, code })
       } else {
         reject(new Error(`FFmpeg exited with code ${code}: ${stderr}`))

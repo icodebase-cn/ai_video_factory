@@ -89,5 +89,5 @@ export default function initIPC(win: BrowserWindow) {
   ipcMain.handle('edge-tts-synthesize-to-file', (_event, params) => edgeTtsSynthesizeToFile(params))
 
   // 渲染视频
-  ipcMain.handle('render-video', (_event, params) => renderVideo(params))
+  ipcMain.handle('render-video', (_event, params) => renderVideo(_event, params))
 }

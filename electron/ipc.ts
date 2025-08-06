@@ -94,5 +94,19 @@ export default function initIPC(win: BrowserWindow) {
   ipcMain.handle('edge-tts-synthesize-to-file', (_event, params) => edgeTtsSynthesizeToFile(params))
 
   // 渲染视频
-  ipcMain.handle('render-video', (_event, params) => renderVideo(_event, params))
+  ipcMain.handle('render-video', (_event, params) => {
+    // 进度回调
+    const onProgress = (progress: number) => {
+      _event.sender.send('render-video-progress', progress)
+    }
+
+    // 创建 AbortController
+    const controller = new AbortController()
+    // 监听取消事件
+    ipcMain.once('cancel-render-video', () => {
+      controller.abort()
+    })
+
+    return renderVideo({ ...params, onProgress, abortSignal: controller.signal })
+  })
 }

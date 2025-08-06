@@ -6,8 +6,6 @@ export interface RenderVideoParams {
   outputSize: { width: number; height: number }
   outputPath: string
   outputDuration?: string
-  onProgress?: (progress: number) => void
-  abortSignal?: AbortSignal
 }
 
 export interface ExecuteFFmpegResult {

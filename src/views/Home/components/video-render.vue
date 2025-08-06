@@ -1,5 +1,15 @@
 <template>
   <div class="h-0 flex-1 relative">
+    <div class="absolute top-2/12 w-full flex justify-center">
+      <v-chip> 空闲，可以开始合成 </v-chip>
+      <!-- <v-chip variant="elevated"> 正在使用 AI 大模型生成文案 </v-chip> -->
+      <!-- <v-chip variant="elevated"> 正在使用 TTS 合成语音 </v-chip> -->
+      <!-- <v-chip variant="elevated"> 正在处理分镜素材 </v-chip> -->
+      <!-- <v-chip variant="elevated"> 正在渲染视频 </v-chip> -->
+      <!-- <v-chip variant="elevated" color="success"> 渲染成功，可以开始下一个 </v-chip> -->
+      <!-- <v-chip variant="elevated" color="error"> 渲染失败，请重新尝试 </v-chip> -->
+    </div>
+
     <v-sheet
       class="h-full p-2 pt-4 flex flex-col gap-6 items-center justify-between"
       border

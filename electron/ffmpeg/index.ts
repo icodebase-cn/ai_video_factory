@@ -24,10 +24,15 @@ const ffmpegPath: string = isWindows
 // }
 // test()
 
-export async function renderVideo(event: Electron.IpcMainInvokeEvent, params: RenderVideoParams) {
+export async function renderVideo(
+  params: RenderVideoParams & {
+    onProgress?: (progress: number) => void
+    abortSignal?: AbortSignal
+  },
+): Promise<ExecuteFFmpegResult> {
   try {
     // 解构参数
-    const { videoFiles, timeRanges, outputSize, outputDuration, abortSignal } = params
+    const { videoFiles, timeRanges, outputSize, outputDuration, onProgress, abortSignal } = params
 
     // 音频默认配置
     const audioFiles = params.audioFiles ?? {}
@@ -128,11 +133,6 @@ export async function renderVideo(event: Electron.IpcMainInvokeEvent, params: Re
 
     // 打印命令
     // console.log('执行命令:', args.join(' '))
-
-    // 进度回调
-    const onProgress = (progress: number) => {
-      event.sender.send('render-video-progress', progress)
-    }
 
     // 执行命令
     const result = await executeFFmpeg(args, { onProgress, abortSignal })

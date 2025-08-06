@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { EdgeTTSVoice } from '~/electron/lib/edge-tts'
 
-enum RenderStatus {
+export enum RenderStatus {
   None,
   GenerateText,
   SynthesizedSpeech,

@@ -6,7 +6,10 @@
 
     <div class="w-full h-0 flex-1 flex box-border gap-2 py-2 px-3">
       <div class="w-1/3 h-full">
-        <TextGenerate ref="TextGenerateInstance" />
+        <TextGenerate
+          ref="TextGenerateInstance"
+          :disabled="appStore.renderStatus === RenderStatus.GenerateText"
+        />
       </div>
       <div class="w-1/3 h-full">
         <VideoManage ref="VideoManageInstance" />
@@ -26,7 +29,7 @@ import TtsControl from './components/tts-control.vue'
 import VideoRender from './components/video-render.vue'
 
 import { ref } from 'vue'
-import { useAppStore } from '@/store'
+import { RenderStatus, useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
 import { ListFilesFromFolderRecord } from '~/electron/types'
 import random from 'random'
@@ -67,6 +70,7 @@ const handleRenderVideo = async () => {
 
   try {
     // 获取文案
+    appStore.updateRenderStatus(RenderStatus.GenerateText)
     const text = TextGenerateInstance.value?.getCurrentOutputText()
     if (!text) {
       toast.warning('请先生成文案')
@@ -74,6 +78,7 @@ const handleRenderVideo = async () => {
     }
 
     // TTS合成语音
+    appStore.updateRenderStatus(RenderStatus.SynthesizedSpeech)
     const ttsResult = await TtsControlInstance.value?.synthesizedSpeechToFile({
       text,
       withCaption: true,
@@ -92,6 +97,8 @@ const handleRenderVideo = async () => {
       duration: ttsResult.duration,
     })!
 
+    // 合成视频
+    appStore.updateRenderStatus(RenderStatus.Rendering)
     await window.electron.renderVideo({
       ...videoSegments,
       audioFiles: {
@@ -110,6 +117,7 @@ const handleRenderVideo = async () => {
     })
 
     toast.success('视频合成成功')
+    appStore.updateRenderStatus(RenderStatus.Completed)
   } catch (error) {
     console.error('视频合成失败:', error)
     // @ts-ignore
@@ -117,6 +125,7 @@ const handleRenderVideo = async () => {
     toast.error(
       `视频合成失败，请检查各项配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
     )
+    appStore.updateRenderStatus(RenderStatus.Failed)
   }
 }
 </script>

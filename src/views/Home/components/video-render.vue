@@ -1,5 +1,5 @@
 <template>
-  <div class="h-0 flex-1">
+  <div class="h-0 flex-1 relative">
     <v-sheet
       class="h-full p-2 pt-4 flex flex-col gap-6 items-center justify-between"
       border
@@ -109,6 +109,12 @@
         </div>
       </div>
     </v-sheet>
+
+    <div class="absolute bottom-2 w-full flex justify-center text-sm">
+      <span class="text-indigo cursor-pointer select-none" @click="handleOpenHomePage">
+        Powered by YILS（博客地址：https://yils.blog）
+      </span>
+    </div>
   </div>
 </template>
 
@@ -162,6 +168,10 @@ const handleSelectBgmFolder = async () => {
   if (folderPath) {
     config.value.bgmPath = folderPath
   }
+}
+
+const handleOpenHomePage = () => {
+  window.electron.openExternal({ url: 'https://yils.blog' })
 }
 </script>
 

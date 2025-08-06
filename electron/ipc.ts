@@ -1,9 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BrowserWindow, ipcMain, dialog, app } from 'electron'
+import { BrowserWindow, ipcMain, dialog, app, shell } from 'electron'
 import { sqBulkInsertOrUpdate, sqDelete, sqInsert, sqQuery, sqUpdate } from './sqlite'
-import { ListFilesFromFolderParams, SelectFolderParams } from './types'
+import { ListFilesFromFolderParams, OpenExternalParams, SelectFolderParams } from './types'
 import { edgeTtsGetVoiceList, edgeTtsSynthesizeToBase64, edgeTtsSynthesizeToFile } from './tts'
 import { renderVideo } from './ffmpeg'
 
@@ -51,6 +51,11 @@ export default function initIPC(win: BrowserWindow) {
   //关闭程序
   ipcMain.on('win-close', () => {
     win?.close()
+  })
+
+  // 打开外部链接
+  ipcMain.handle('open-external', (_event, params: OpenExternalParams) => {
+    shell.openExternal(params.url)
   })
 
   // 选择文件夹

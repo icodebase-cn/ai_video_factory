@@ -1,3 +1,7 @@
+export interface OpenExternalParams {
+  url: string
+}
+
 export interface SelectFolderParams {
   title?: string
   defaultPath?: string

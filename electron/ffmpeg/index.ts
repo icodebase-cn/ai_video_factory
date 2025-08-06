@@ -6,8 +6,13 @@ import { getTempTtsVoiceFilePath } from '../tts'
 import path from 'node:path'
 import { generateUniqueFileName } from '../lib/tools'
 
+const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 const isWindows = process.platform === 'win32'
-const ffmpegPath = isWindows ? require('ffmpeg-static') : ('ffmpeg' as string)
+const ffmpegPath: string = isWindows
+  ? VITE_DEV_SERVER_URL
+    ? require('ffmpeg-static')
+    : (require('ffmpeg-static') as string).replace('app.asar', 'app.asar.unpacked')
+  : 'ffmpeg'
 
 // async function test() {
 //   try {

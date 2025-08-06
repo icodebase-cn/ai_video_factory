@@ -1,7 +1,14 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import BetterSqlite3 from 'better-sqlite3'
-import { QueryParams, InsertParams, UpdateParams, DeleteParams, BulkInsertOrUpdateParams } from './types'
+import {
+  QueryParams,
+  InsertParams,
+  UpdateParams,
+  DeleteParams,
+  BulkInsertOrUpdateParams,
+} from './types'
+import { app } from 'electron'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -23,7 +30,7 @@ const nativePath = VITE_DEV_SERVER_URL
     )
   : path.join(NATIVE_DIST, 'better-sqlite3.node')
 
-const dbPath = path.join(process.cwd(), 'data.db')
+const dbPath = path.join(app.getPath('userData'), 'data.db')
 
 console.log('BetterSqlite3 path:', nativePath)
 console.log('Database path:', dbPath)

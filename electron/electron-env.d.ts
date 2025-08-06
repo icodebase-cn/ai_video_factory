@@ -29,6 +29,7 @@ interface Window {
     winMin: () => void
     winMax: () => void
     winClose: () => void
+    openExternal: (params: import('./types').OpenExternalParams) => void
     selectFolder: (params: import('./types').SelectFolderParams) => Promise<string>
     listFilesFromFolder: (
       params: import('./types').ListFilesFromFolderParams,

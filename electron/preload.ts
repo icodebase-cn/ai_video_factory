@@ -6,7 +6,7 @@ import {
   DeleteParams,
   BulkInsertOrUpdateParams,
 } from './sqlite/types'
-import { ListFilesFromFolderParams, SelectFolderParams } from './types'
+import { ListFilesFromFolderParams, OpenExternalParams, SelectFolderParams } from './types'
 import { EdgeTtsSynthesizeCommonParams } from './tts/types'
 import { RenderVideoParams } from './ffmpeg/types'
 
@@ -40,6 +40,7 @@ contextBridge.exposeInMainWorld('electron', {
   winMin: () => ipcRenderer.send('win-min'),
   winMax: () => ipcRenderer.send('win-max'),
   winClose: () => ipcRenderer.send('win-close'),
+  openExternal: (params: OpenExternalParams) => ipcRenderer.invoke('open-external', params),
   selectFolder: (params: SelectFolderParams) => ipcRenderer.invoke('select-folder', params),
   listFilesFromFolder: (params: ListFilesFromFolderParams) =>
     ipcRenderer.invoke('list-files-from-folder', params),

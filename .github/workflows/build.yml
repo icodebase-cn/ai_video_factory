@@ -76,13 +76,13 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/*.dmg
-            dist/*.exe
-            dist/*.deb
-            dist/*.rpm
-            dist/*.AppImage
-            dist/latest*.yml
-            dist/*.blockmap
+            release/${env.VERSION}/*.dmg
+            release/${env.VERSION}/*.exe
+            release/${env.VERSION}/*.deb
+            release/${env.VERSION}/*.rpm
+            release/${env.VERSION}/*.AppImage
+            release/${env.VERSION}/latest*.yml
+            release/${env.VERSION}/*.blockmap
           body: ${{ env.NOTES }}
           draft: false
           prerelease: false

@@ -1,30 +1,46 @@
 <template>
   <div class="h-0 flex-1 relative">
-    <div class="absolute top-2/12 w-full flex justify-center">
-      <v-chip> 空闲，可以开始合成 </v-chip>
-      <!-- <v-chip variant="elevated"> 正在使用 AI 大模型生成文案 </v-chip> -->
-      <!-- <v-chip variant="elevated"> 正在使用 TTS 合成语音 </v-chip> -->
-      <!-- <v-chip variant="elevated"> 正在处理分镜素材 </v-chip> -->
-      <!-- <v-chip variant="elevated"> 正在渲染视频 </v-chip> -->
-      <!-- <v-chip variant="elevated" color="success"> 渲染成功，可以开始下一个 </v-chip> -->
-      <!-- <v-chip variant="elevated" color="error"> 渲染失败，请重新尝试 </v-chip> -->
+    <div class="absolute top-1/12 w-full flex justify-center cursor-default select-none">
+      <v-chip v-if="appStore.renderStatus === RenderStatus.None"> 空闲，可以开始合成 </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.GenerateText" variant="elevated">
+        正在使用 AI 大模型生成文案
+      </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.SynthesizedSpeech" variant="elevated">
+        正在使用 TTS 合成语音
+      </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.SegmentVideo" variant="elevated">
+        正在处理分镜素材
+      </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.Rendering" variant="elevated">
+        正在渲染视频
+      </v-chip>
+      <v-chip
+        v-if="appStore.renderStatus === RenderStatus.Completed"
+        variant="elevated"
+        color="success"
+      >
+        渲染成功，可以开始下一个
+      </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.Failed" variant="elevated" color="error">
+        渲染失败，请重新尝试
+      </v-chip>
     </div>
 
-    <v-sheet
-      class="h-full p-2 pt-4 flex flex-col gap-6 items-center justify-between"
-      border
-      rounded
-    >
-      <div class="w-full h-0 flex-1 flex gap-10 items-center justify-center">
-        <v-progress-circular
-          color="primary"
-          v-model="renderProgress"
-          :size="96"
-          :width="8"
-        ></v-progress-circular>
+    <v-sheet class="h-full p-2 pt-4 flex flex-col gap-6 items-center justify-center" border rounded>
+      <div class="w-full h-[120px] flex gap-10 items-center justify-center">
+        <div class="flex flex-col gap-4">
+          <v-progress-circular
+            color="indigo"
+            v-model="renderProgress"
+            :indeterminate="taskInProgress && appStore.renderStatus !== RenderStatus.Rendering"
+            :size="96"
+            :width="8"
+          >
+          </v-progress-circular>
+        </div>
         <div class="flex flex-col gap-4">
           <v-btn
-            class=""
+            v-if="!taskInProgress"
             size="x-large"
             color="deep-purple-accent-3"
             prepend-icon="mdi-rocket-launch"
@@ -32,9 +48,18 @@
           >
             开始合成
           </v-btn>
+          <v-btn
+            v-else
+            size="x-large"
+            color="red"
+            prepend-icon="mdi-stop"
+            @click="emit('cancelRender')"
+          >
+            停止合成
+          </v-btn>
           <v-dialog v-model="configDialogShow" max-width="600" persistent>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn v-bind="activatorProps"> 合成配置 </v-btn>
+              <v-btn v-bind="activatorProps" :disabled="taskInProgress"> 合成配置 </v-btn>
             </template>
 
             <v-card prepend-icon="mdi-text-box-edit-outline" title="配置合成选项">
@@ -118,6 +143,17 @@
           </v-dialog>
         </div>
       </div>
+
+      <div class="w-full flex justify-center">
+        <v-switch
+          v-model="appStore.autoBatch"
+          label="自动批量合成"
+          color="indigo"
+          density="compact"
+          hide-details
+          :disabled="taskInProgress"
+        ></v-switch>
+      </div>
     </v-sheet>
 
     <div class="absolute bottom-2 w-full flex justify-center text-sm">
@@ -129,14 +165,23 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRaw, nextTick } from 'vue'
-import { useAppStore } from '@/store'
+import { ref, toRaw, nextTick, computed } from 'vue'
+import { RenderStatus, useAppStore } from '@/store'
 
 const appStore = useAppStore()
 
 const emit = defineEmits<{
   (e: 'renderVideo'): void
+  (e: 'cancelRender'): void
 }>()
+
+const taskInProgress = computed(() => {
+  return (
+    appStore.renderStatus !== RenderStatus.None &&
+    appStore.renderStatus !== RenderStatus.Completed &&
+    appStore.renderStatus !== RenderStatus.Failed
+  )
+})
 
 const renderProgress = ref(0)
 window.ipcRenderer.on('render-video-progress', (_, progress: number) => {

@@ -1,59 +1,66 @@
 <template>
   <div class="w-full h-full">
-    <v-sheet class="h-full p-2 flex flex-col" border rounded>
-      <div class="flex gap-2 mb-2">
-        <v-text-field
-          v-model="appStore.videoAssetsFolder"
-          label="分镜视频素材文件夹"
-          density="compact"
-          hide-details
-          readonly
-        >
-        </v-text-field>
-        <v-btn class="mt-[2px]" prepend-icon="mdi-folder-open" @click="handleSelectFolder">
-          选择
-        </v-btn>
-      </div>
-
-      <div class="flex-1 h-0 w-full border">
-        <div
-          v-if="videoAssets.length"
-          class="w-full max-h-full overflow-y-auto grid grid-cols-3 gap-2 p-2"
-        >
-          <div
-            v-for="(item, index) in videoAssets"
-            :key="index"
-            class="w-full h-full max-h-[200px]"
+    <v-form class="w-full h-full" :disabled="disabled">
+      <v-sheet class="h-full p-2 flex flex-col" border rounded>
+        <div class="flex gap-2 mb-2">
+          <v-text-field
+            v-model="appStore.videoAssetsFolder"
+            label="分镜视频素材文件夹"
+            density="compact"
+            hide-details
+            readonly
           >
-            <VideoAutoPreview
-              :asset="item"
-              @loaded="
-                (info) => {
-                  videoInfoList[index] = info
-                }
-              "
-            />
-          </div>
+          </v-text-field>
+          <v-btn
+            class="mt-[2px]"
+            prepend-icon="mdi-folder-open"
+            :disabled="disabled"
+            @click="handleSelectFolder"
+          >
+            选择
+          </v-btn>
         </div>
-        <v-empty-state
-          v-else
-          headline="暂无内容"
-          text="从上面选择一个包含足够分镜素材的文件夹"
-        ></v-empty-state>
-      </div>
 
-      <div class="my-2">
-        <v-btn
-          block
-          prepend-icon="mdi-refresh"
-          :disabled="!appStore.videoAssetsFolder"
-          :loading="refreshAssetsLoading"
-          @click="refreshAssets"
-        >
-          刷新素材库
-        </v-btn>
-      </div>
-    </v-sheet>
+        <div class="flex-1 h-0 w-full border">
+          <div
+            v-if="videoAssets.length"
+            class="w-full max-h-full overflow-y-auto grid grid-cols-3 gap-2 p-2"
+          >
+            <div
+              class="w-full h-full max-h-[200px]"
+              v-for="(item, index) in videoAssets"
+              :key="index"
+            >
+              <VideoAutoPreview
+                :asset="item"
+                @loaded="
+                  (info) => {
+                    videoInfoList[index] = info
+                  }
+                "
+              />
+            </div>
+          </div>
+          <v-empty-state
+            v-else
+            headline="暂无内容"
+            text="从上面选择一个包含足够分镜素材的文件夹"
+          ></v-empty-state>
+        </div>
+
+        <div class="my-2">
+          <v-btn
+            block
+            prepend-icon="mdi-refresh"
+            :disabled="disabled || !appStore.videoAssetsFolder"
+            :loading="refreshAssetsLoading"
+            @click="refreshAssets"
+          >
+            刷新素材库
+          </v-btn>
+        </div>
+      </v-sheet>
+    </v-form>
   </div>
 </template>
 
@@ -68,6 +75,10 @@ import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
+
+defineProps<{
+  disabled?: boolean
+}>()
 
 // 选择文件夹
 const handleSelectFolder = async () => {

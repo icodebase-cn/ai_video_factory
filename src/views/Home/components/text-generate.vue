@@ -21,7 +21,14 @@
           >
             生成
           </v-btn>
-          <v-btn v-else prepend-icon="mdi-stop" color="red" stacked @click="handleStopGenerate">
+          <v-btn
+            v-else
+            prepend-icon="mdi-stop"
+            color="red"
+            stacked
+            :disabled="disabled"
+            @click="handleStopGenerate"
+          >
             停止
           </v-btn>
 
@@ -107,9 +114,9 @@ defineProps<{
 const outputText = ref('')
 const isGenerating = ref(false)
 const abortController = ref<AbortController | null>(null)
-const handleGenerate = async () => {
+const handleGenerate = async (oprions?: { noToast?: boolean }) => {
   if (!appStore.prompt) {
-    toast.warning('提示词不能为空')
+    !oprions?.noToast && toast.warning('提示词不能为空')
     throw new Error('提示词不能为空')
   }
 
@@ -134,17 +141,19 @@ const handleGenerate = async () => {
     for await (const textPart of result.textStream) {
       outputText.value += textPart
     }
+    return outputText.value
   } catch (error) {
     console.log(`error`, error)
     // @ts-ignore
     if (error?.name !== 'AbortError' && error?.error?.name !== 'AbortError') {
       // @ts-ignore
       const errorMessage = error?.message || error?.error?.message
-      toast.error(
-        `生成失败，请检查大模型配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
-      )
+      !oprions?.noToast &&
+        toast.error(
+          `生成失败，请检查大模型配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
+        )
+      throw error
     }
-    throw error
   } finally {
     abortController.value = null
     isGenerating.value = false
@@ -204,8 +213,12 @@ const handleTestConfig = async () => {
 const getCurrentOutputText = () => {
   return outputText.value
 }
+// 清空文案
+const clearOutputText = () => {
+  outputText.value = ''
+}
 
-defineExpose({ handleGenerate, getCurrentOutputText })
+defineExpose({ handleGenerate, handleStopGenerate, getCurrentOutputText, clearOutputText })
 </script>
 
 <style lang="scss" scoped>

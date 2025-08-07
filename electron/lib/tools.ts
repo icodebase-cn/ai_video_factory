@@ -1,6 +1,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { app } from 'electron'
 
+// import packageJson from '~/package.json'
+
+/**
+ * 生成有序的唯一文件名，用于处理文件已存在的情况
+ */
 export function generateUniqueFileName(filePath: string): string {
   const dir = path.dirname(filePath)
   const ext = path.extname(filePath)
@@ -13,4 +19,11 @@ export function generateUniqueFileName(filePath: string): string {
     counter++
   }
   return newPath
+}
+
+/**
+ * 获取软件的临时文件存储路径
+ */
+export function getAppTempPath() {
+  return path.join(app.getPath('temp'), app.name).replace(/\\/g, '/')
 }

@@ -62,6 +62,7 @@ export const useAppStore = defineStore(
       outputFileName: '',
       outputFileExt: '.mp4',
     })
+    const autoBatch = ref(false)
     const renderStatus = ref(RenderStatus.None)
     const updateRenderConfig = (newConfig: typeof renderConfig.value) => {
       renderConfig.value = newConfig
@@ -89,6 +90,7 @@ export const useAppStore = defineStore(
       tryListeningText,
 
       renderConfig,
+      autoBatch,
       renderStatus,
       updateRenderConfig,
       updateRenderStatus,
@@ -96,7 +98,7 @@ export const useAppStore = defineStore(
   },
   {
     persist: {
-      omit: ['genderList', 'speedList'],
+      omit: ['genderList', 'speedList', 'autoBatch', 'renderStatus'],
     },
   },
 )

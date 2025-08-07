@@ -12,11 +12,17 @@
         />
       </div>
       <div class="w-1/3 h-full">
-        <VideoManage ref="VideoManageInstance" />
+        <VideoManage
+          ref="VideoManageInstance"
+          :disabled="appStore.renderStatus === RenderStatus.SegmentVideo"
+        />
       </div>
       <div class="w-1/3 h-full flex flex-col gap-3">
-        <TtsControl ref="TtsControlInstance" />
-        <VideoRender @render-video="handleRenderVideo" />
+        <TtsControl
+          ref="TtsControlInstance"
+          :disabled="appStore.renderStatus === RenderStatus.SynthesizedSpeech"
+        />
+        <VideoRender @render-video="handleRenderVideo" @cancel-render="handleCancelRender" />
       </div>
     </div>
   </div>
@@ -71,33 +77,43 @@ const handleRenderVideo = async () => {
   try {
     // 获取文案
     appStore.updateRenderStatus(RenderStatus.GenerateText)
-    const text = TextGenerateInstance.value?.getCurrentOutputText()
-    if (!text) {
-      toast.warning('请先生成文案')
-      return
-    }
+    const text =
+      TextGenerateInstance.value?.getCurrentOutputText() ||
+      (await TextGenerateInstance.value?.handleGenerate())!
 
     // TTS合成语音
+    // @ts-ignore
+    if (appStore.renderStatus !== RenderStatus.GenerateText) {
+      return
+    }
     appStore.updateRenderStatus(RenderStatus.SynthesizedSpeech)
     const ttsResult = await TtsControlInstance.value?.synthesizedSpeechToFile({
       text,
       withCaption: true,
     })
     if (ttsResult?.duration === undefined) {
-      toast.warning('语音合成失败，音频文件损坏')
-      return
+      throw new Error('语音合成失败，音频文件损坏')
     }
     if (ttsResult?.duration === 0) {
-      toast.warning('语音时长为0秒，可能文案为空')
-      return
+      throw new Error('语音时长为0秒，检查TTS语音合成配置及网络连接是否正常')
     }
 
     // 获取视频片段
+    // @ts-ignore
+    if (appStore.renderStatus !== RenderStatus.SynthesizedSpeech) {
+      return
+    }
+    appStore.updateRenderStatus(RenderStatus.SegmentVideo)
     const videoSegments = VideoManageInstance.value?.getVideoSegments({
       duration: ttsResult.duration,
     })!
+    await new Promise((resolve) => setTimeout(resolve, random.integer(1000, 3000)))
 
     // 合成视频
+    // @ts-ignore
+    if (appStore.renderStatus !== RenderStatus.SegmentVideo) {
+      return
+    }
     appStore.updateRenderStatus(RenderStatus.Rendering)
     await window.electron.renderVideo({
       ...videoSegments,
@@ -118,8 +134,16 @@ const handleRenderVideo = async () => {
 
     toast.success('视频合成成功')
     appStore.updateRenderStatus(RenderStatus.Completed)
+
+    if (appStore.autoBatch) {
+      toast.info('开始合成下一个')
+      TextGenerateInstance.value?.clearOutputText()
+      handleRenderVideo()
+    }
   } catch (error) {
     console.error('视频合成失败:', error)
+    if (appStore.renderStatus === RenderStatus.None) return
+
     // @ts-ignore
     const errorMessage = error?.message || error?.error?.message
     toast.error(
@@ -127,6 +151,29 @@ const handleRenderVideo = async () => {
     )
     appStore.updateRenderStatus(RenderStatus.Failed)
   }
+}
+const handleCancelRender = () => {
+  console.log('视频合成终止')
+  switch (appStore.renderStatus) {
+    case RenderStatus.GenerateText:
+      TextGenerateInstance.value?.handleStopGenerate()
+      break
+
+    case RenderStatus.SynthesizedSpeech:
+      break
+
+    case RenderStatus.SegmentVideo:
+      break
+
+    case RenderStatus.Rendering:
+      window.ipcRenderer.send('cancel-render-video')
+      break
+
+    default:
+      break
+  }
+  appStore.updateRenderStatus(RenderStatus.None)
+  toast.info('视频合成已终止')
 }
 </script>
 

@@ -1,6 +1,5 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { app } from 'electron'
 import { EdgeTTS } from '../lib/edge-tts'
 import { parseBuffer } from 'music-metadata'
 import {
@@ -8,13 +7,30 @@ import {
   EdgeTtsSynthesizeToFileParams,
   EdgeTtsSynthesizeToFileResult,
 } from './types'
+import { getAppTempPath } from '../lib/tools'
+import { app } from 'electron'
 
 const edgeTts = new EdgeTTS()
 const setupTime = new Date().getTime()
 
 export function getTempTtsVoiceFilePath() {
-  return path.join(app.getPath('temp'), `temp-tts-voice-${setupTime}.mp3`).replace(/\\/g, '/')
+  return path.join(getAppTempPath(), `temp-tts-voice-${setupTime}.mp3`).replace(/\\/g, '/')
 }
+
+export function clearCurrentTtsFiles() {
+  const voicePath = getTempTtsVoiceFilePath()
+  if (fs.existsSync(voicePath)) {
+    fs.unlinkSync(voicePath)
+  }
+  const srtPath = path.join(path.dirname(voicePath), path.basename(voicePath, '.mp3') + '.srt')
+  if (fs.existsSync(srtPath)) {
+    fs.unlinkSync(srtPath)
+  }
+}
+
+app.on('before-quit', () => {
+  clearCurrentTtsFiles()
+})
 
 export function edgeTtsGetVoiceList() {
   return edgeTts.getVoices()

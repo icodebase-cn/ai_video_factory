@@ -1,55 +1,58 @@
 <template>
   <div>
-    <v-sheet class="h-fit p-2" border rounded>
-      <v-combobox
-        v-model="appStore.language"
-        density="comfortable"
-        label="语言"
-        :items="appStore.languageList"
-        no-data-text="无数据"
-        @update:model-value="clearVoice"
-      ></v-combobox>
-      <v-select
-        v-model="appStore.gender"
-        density="comfortable"
-        label="性别"
-        :items="appStore.genderList"
-        item-title="label"
-        item-value="value"
-        @update:model-value="clearVoice"
-      ></v-select>
-      <v-select
-        v-model="appStore.voice"
-        density="comfortable"
-        label="声音"
-        :items="filteredVoicesList"
-        item-title="FriendlyName"
-        return-object
-        no-data-text="请先选择语言和性别"
-      ></v-select>
-      <v-select
-        v-model="appStore.speed"
-        density="comfortable"
-        label="语速"
-        :items="appStore.speedList"
-        item-title="label"
-        item-value="value"
-      ></v-select>
-      <v-text-field
-        v-model="appStore.tryListeningText"
-        density="comfortable"
-        label="试听文本"
-      ></v-text-field>
-      <v-btn
-        class="mb-2"
-        prepend-icon="mdi-volume-high"
-        block
-        :loading="tryListeningLoading"
-        @click="handleTryListening"
-      >
-        试听
-      </v-btn>
-    </v-sheet>
+    <v-form :disabled="disabled">
+      <v-sheet class="h-fit p-2" border rounded>
+        <v-combobox
+          v-model="appStore.language"
+          density="comfortable"
+          label="语言"
+          :items="appStore.languageList"
+          no-data-text="无数据"
+          @update:model-value="clearVoice"
+        ></v-combobox>
+        <v-select
+          v-model="appStore.gender"
+          density="comfortable"
+          label="性别"
+          :items="appStore.genderList"
+          item-title="label"
+          item-value="value"
+          @update:model-value="clearVoice"
+        ></v-select>
+        <v-select
+          v-model="appStore.voice"
+          density="comfortable"
+          label="声音"
+          :items="filteredVoicesList"
+          item-title="FriendlyName"
+          return-object
+          no-data-text="请先选择语言和性别"
+        ></v-select>
+        <v-select
+          v-model="appStore.speed"
+          density="comfortable"
+          label="语速"
+          :items="appStore.speedList"
+          item-title="label"
+          item-value="value"
+        ></v-select>
+        <v-text-field
+          v-model="appStore.tryListeningText"
+          density="comfortable"
+          label="试听文本"
+        ></v-text-field>
+        <v-btn
+          class="mb-2"
+          prepend-icon="mdi-volume-high"
+          block
+          :loading="tryListeningLoading"
+          :disabled="disabled"
+          @click="handleTryListening"
+        >
+          试听
+        </v-btn>
+      </v-sheet>
+    </v-form>
   </div>
 </template>
 
@@ -60,6 +63,10 @@ import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const appStore = useAppStore()
+
+defineProps<{
+  disabled?: boolean
+}>()
 
 const configValid = () => {
   if (!appStore.voice) {
@@ -140,7 +147,6 @@ const synthesizedSpeechToFile = async (option: { text: string; withCaption?: boo
     return result
   } catch (error) {
     console.log('语音合成失败', error)
-    toast.error('语音合成失败，请检查网络')
     throw error
   }
 }

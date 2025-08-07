@@ -86,5 +86,6 @@ jobs:
           body: ${{ env.NOTES }}
           draft: false
           prerelease: false
+          overwrite_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

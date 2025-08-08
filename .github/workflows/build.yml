@@ -76,22 +76,24 @@ jobs:
         id: Test
         run: |
           ls -al
+          ls -al release
+          ls -al release/${env.VERSION}
         shell: bash
 
-      # # Create Release
-      # - name: Create Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     files: |
-      #       release/${env.VERSION}/*.dmg
-      #       release/${env.VERSION}/*.exe
-      #       release/${env.VERSION}/*.deb
-      #       release/${env.VERSION}/*.rpm
-      #       release/${env.VERSION}/*.AppImage
-      #       release/${env.VERSION}/latest*.yml
-      #       release/${env.VERSION}/*.blockmap
-      #     body: ${{ env.NOTES }}
-      #     draft: false
-      #     prerelease: false
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Create Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/${env.VERSION}/*.dmg
+            release/${env.VERSION}/*.exe
+            release/${env.VERSION}/*.deb
+            release/${env.VERSION}/*.rpm
+            release/${env.VERSION}/*.AppImage
+            release/${env.VERSION}/latest*.yml
+            release/${env.VERSION}/*.blockmap
+          body: ${{ env.NOTES }}
+          draft: true
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -73,9 +73,9 @@ jobs:
 
       # Upload artifacts
       - name: Upload artifacts
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          artifacts: |
+          files: |
             release/${env.VERSION}/*.dmg
             release/${env.VERSION}/*.exe
             release/${env.VERSION}/*.deb
@@ -84,6 +84,7 @@ jobs:
             release/${env.VERSION}/latest*.yml
             release/${env.VERSION}/*.blockmap
           body: ${{ env.NOTES }}
-          allowUpdates: true
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

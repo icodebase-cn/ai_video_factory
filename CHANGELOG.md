@@ -11,7 +11,7 @@
 - 支持自动化批量任务
 - 美观的UI界面
 
-## [v0.7.7] - 2025-08-07
+## [v0.7.8] - 2025-08-07
 ### Added
 - 构建测试
 - 跨平台: macOS dmg, Windows exe, Linux AppImage.

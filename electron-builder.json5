@@ -12,7 +12,7 @@
   beforePack: './scripts/before-pack.js',
   mac: {
     target: ['dmg'],
-    artifactName: '${productName}-Mac-${arch}-${version}-Installer.${ext}',
+    artifactName: '${name}-mac-${arch}-${version}-installer.${ext}',
     icon: './public/icon.png',
   },
   win: {
@@ -21,7 +21,7 @@
         target: 'nsis',
       },
     ],
-    artifactName: '${productName}-Windows-${arch}-${version}-Setup.${ext}',
+    artifactName: '${name}-windows-${arch}-${version}-setup.${ext}',
     icon: './public/icon.png',
   },
   nsis: {
@@ -33,7 +33,7 @@
   },
   linux: {
     target: ['AppImage'],
-    artifactName: '${productName}-Linux-${arch}-${version}.${ext}',
+    artifactName: '${name}-linux-${arch}-${version}.${ext}',
     icon: './public/icon.png',
   },
 }

@@ -84,5 +84,6 @@ jobs:
             release/${env.VERSION}/latest*.yml
             release/${env.VERSION}/*.blockmap
           body: ${{ env.NOTES }}
+          allowUpdates: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

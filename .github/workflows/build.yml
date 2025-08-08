@@ -34,7 +34,7 @@ jobs:
           export ELECTRON_BUILDER_EXTRA_ARGS="--universal"
           pnpm run build
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
           DEBUG: electron-builder
 
@@ -42,8 +42,8 @@ jobs:
       - name: Build Windows
         if: matrix.os == 'windows-latest'
         run: pnpm run build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Linux Build
       - name: Build Linux
@@ -52,8 +52,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
           pnpm run build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Get version from tag
       - name: Get version from tag
@@ -77,23 +77,23 @@ jobs:
         run: |
           ls -al
           ls -al release
-          ls -al release/${env.VERSION}
+          ls -al release/${{ env.VERSION }}
         shell: bash
 
-      # Create Release
-      - name: Create Release
+      # Publish Release
+      - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release/${env.VERSION}/*.dmg
-            release/${env.VERSION}/*.exe
-            release/${env.VERSION}/*.deb
-            release/${env.VERSION}/*.rpm
-            release/${env.VERSION}/*.AppImage
-            release/${env.VERSION}/latest*.yml
-            release/${env.VERSION}/*.blockmap
+            release/${{ env.VERSION }}/*.dmg
+            release/${{ env.VERSION }}/*.exe
+            release/${{ env.VERSION }}/*.deb
+            release/${{ env.VERSION }}/*.rpm
+            release/${{ env.VERSION }}/*.AppImage
+            release/${{ env.VERSION }}/latest*.yml
+            release/${{ env.VERSION }}/*.blockmap
           body: ${{ env.NOTES }}
-          draft: true
+          draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

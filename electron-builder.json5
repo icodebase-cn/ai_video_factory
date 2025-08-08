@@ -17,7 +17,7 @@
         arch: ['universal'],
       },
     ],
-    artifactName: '${name}-mac-${version}-installer.${ext}',
+    artifactName: '${name}-${version}-mac-${arch}-installer.${ext}',
     icon: './public/icon.png',
   },
   win: {
@@ -26,7 +26,7 @@
         target: 'nsis',
       },
     ],
-    artifactName: '${name}-win-${arch}-${version}-setup.${ext}',
+    artifactName: '${name}-${version}-win-${arch}-setup.${ext}',
     icon: './public/icon.png',
   },
   nsis: {
@@ -38,7 +38,8 @@
   },
   linux: {
     target: ['AppImage'],
-    artifactName: '${name}-linux-${arch}-${version}.${ext}',
+    artifactName: '${name}-${version}-linux-${arch}.${ext}',
     icon: './public/icon.png',
   },
+  publish: null, // disable auto publish 防止重复发版
 }

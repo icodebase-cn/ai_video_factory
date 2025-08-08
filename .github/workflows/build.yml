@@ -71,20 +71,27 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
         shell: bash
 
-      # Upload artifacts
-      - name: Upload artifacts
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            release/${env.VERSION}/*.dmg
-            release/${env.VERSION}/*.exe
-            release/${env.VERSION}/*.deb
-            release/${env.VERSION}/*.rpm
-            release/${env.VERSION}/*.AppImage
-            release/${env.VERSION}/latest*.yml
-            release/${env.VERSION}/*.blockmap
-          body: ${{ env.NOTES }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Test
+      - name: Test
+        id: Test
+        run: |
+          ls -al
+        shell: bash
+
+      # # Create Release
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: |
+      #       release/${env.VERSION}/*.dmg
+      #       release/${env.VERSION}/*.exe
+      #       release/${env.VERSION}/*.deb
+      #       release/${env.VERSION}/*.rpm
+      #       release/${env.VERSION}/*.AppImage
+      #       release/${env.VERSION}/latest*.yml
+      #       release/${env.VERSION}/*.blockmap
+      #     body: ${{ env.NOTES }}
+      #     draft: false
+      #     prerelease: false
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -11,8 +11,13 @@
   npmRebuild: false, // disable rebuild node_modules 使用包内自带预构建二进制，而不重新构建
   beforePack: './scripts/before-pack.js',
   mac: {
-    target: ['dmg'],
-    artifactName: '${name}-mac-${arch}-${version}-installer.${ext}',
+    target: [
+      {
+        target: 'dmg',
+        arch: ['universal'],
+      },
+    ],
+    artifactName: '${name}-mac-${version}-installer.${ext}',
     icon: './public/icon.png',
   },
   win: {
@@ -21,7 +26,7 @@
         target: 'nsis',
       },
     ],
-    artifactName: '${name}-windows-${arch}-${version}-setup.${ext}',
+    artifactName: '${name}-win-${arch}-${version}-setup.${ext}',
     icon: './public/icon.png',
   },
   nsis: {

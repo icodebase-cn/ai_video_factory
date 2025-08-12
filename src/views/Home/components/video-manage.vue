@@ -180,8 +180,8 @@ const getVideoSegments = (options: { duration: number }) => {
 
     // 处理最后一个片段时长小于最小片段时长情况
     if (options.duration - currentTotalDuration - randomSegmentDuration < minSegmentDuration) {
-      if (randomSegmentDuration + minSegmentDuration < randomAssetInfo.duration) {
-        randomSegmentDuration += minSegmentDuration
+      if (options.duration - currentTotalDuration < randomAssetInfo.duration) {
+        randomSegmentDuration = options.duration - currentTotalDuration
       }
     }
 

@@ -25,8 +25,8 @@
 [![分支][forks-shield]][forks-url]
 [![星标][stars-shield]][stars-url]
 [![问题][issues-shield]][issues-url]
-<!-- [![最新版本][release-shield]][release-url]
-![发布日期][release-date-shield] -->
+[![最新版本][release-shield]][release-url]
+<!-- ![发布日期][release-date-shield] -->
 [![许可证][license-shield]][license-url]
 
   <p align="center">

@@ -153,7 +153,7 @@ const getVideoSegments = (options: { duration: number }) => {
 
     // 获取一个随机素材以及相关信息
     const randomAsset = random.choice(tempVideoAssets)!
-    const randomAssetIndex = tempVideoAssets.indexOf(randomAsset)
+    const randomAssetIndex = videoAssets.value.findIndex((asset) => asset.path === randomAsset.path)
     const randomAssetInfo = videoInfoList.value[randomAssetIndex]
 
     // 删除已选素材

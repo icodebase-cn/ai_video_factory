@@ -86,7 +86,10 @@ export async function renderVideo(
     })
 
     // 拼接视频
-    filters.push(`[${videoStreams.join('][')}]concat=n=${videoFiles.length}:v=1:a=0[vout]`)
+    filters.push(`[${videoStreams.join('][')}]concat=n=${videoFiles.length}:v=1:a=0[vconcat]`)
+
+    // 重置时间基、帧率、色彩空间
+    filters.push(`[vconcat]fps=30,format=yuv420p,setpts=PTS-STARTPTS[vout]`)
 
     // 在视频拼接后添加字幕
     filters.push(`[vout]subtitles=${subtitleFile.replace(/\:/g, '\\\\:')}[with_subs]`)
@@ -122,6 +125,8 @@ export async function renderVideo(
       'aac',
       '-b:a',
       '128k',
+      '-fps_mode',
+      'cfr',
       '-s',
       `${outputSize.width}x${outputSize.height}`,
       '-progress',
@@ -132,6 +137,7 @@ export async function renderVideo(
     )
 
     // 打印命令
+    // console.log('传入参数:', params)
     // console.log('执行命令:', args.join(' '))
 
     // 执行命令

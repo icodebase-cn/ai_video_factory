@@ -73,6 +73,23 @@
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
+## 🎞️ 示例视频
+
+<table>
+<thead>
+<tr>
+<th align="center"><g-emoji class="g-emoji" alias="arrow_forward">▶️</g-emoji> 《产品营销短视频》</th>
+<th align="center"><g-emoji class="g-emoji" alias="arrow_forward">▶️</g-emoji> 《暖心治愈系语录》</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><video src="https://github.com/user-attachments/assets/165a8f96-861b-4cf3-946c-444b9692cef8"></video></td>
+<td align="center"><video src="https://github.com/user-attachments/assets/12694618-e0fe-4848-8a7e-98b3f3a7aece"></video></td>
+</tr>
+</tbody>
+</table>
+
 <!-- 贡献 -->
 ## 🤝 贡献
 

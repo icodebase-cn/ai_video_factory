@@ -90,6 +90,10 @@
 </tbody>
 </table>
 
+注：素材来源于网络，仅用于展示剪辑效果
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
 <!-- 贡献 -->
 ## 🤝 贡献
 

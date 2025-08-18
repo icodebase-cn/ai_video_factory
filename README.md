@@ -154,4 +154,4 @@ Copyright © 2025 YILS.
 [release-url]: https://github.com/YILS-LIN/short-video-factory/releases
 [release-date-shield]: https://img.shields.io/github/release-date/YILS-LIN/short-video-factory?color=9cf&style=flat-round
 [license-shield]: https://img.shields.io/github/license/YILS-LIN/short-video-factory.svg?labelColor=black&style=flat-square
-[license-url]: https://github.com/YILS-LIN/short-video-factory/blob/master/LICENSE.txt
+[license-url]: https://github.com/YILS-LIN/short-video-factory/blob/main/LICENSE

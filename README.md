@@ -132,14 +132,16 @@ Copyright © 2025 YILS.
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-## ☕ 赞赏
+## 🐱 赞赏
 
-如果这个项目对你有帮助，欢迎请作者喝杯咖啡 ☕ 你的 Star ⭐ 和赞助是我持续更新的最大动力！
+如果这个项目对你有帮助，欢迎请作者喝杯咖啡 🍺
 
-（赞助者未来也许会享有额外的特殊功能或新功能优先使用等福利）
+你的 Star ⭐ 和赞助是我持续更新的最大动力！
+
+> 赞助者未来也许会享有额外的特殊功能或新功能优先使用等福利
 
 <div align="left">
-  <img src="https://github.com/user-attachments/assets/6b832dd3-38ea-4927-9c3b-97549c77a1f0" alt="YILS的微信赞赏码" width="50%">
+  <img src="https://github.com/user-attachments/assets/6b832dd3-38ea-4927-9c3b-97549c77a1f0" alt="YILS的微信赞赏码" width="400">
 </div>
 
 <!-- 星标历史 -->

@@ -1,4 +1,5 @@
-import { app, BrowserWindow, screen } from 'electron'
+import { app, BrowserWindow, screen, Menu } from 'electron'
+import type { MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import GlobalSetting from '../setting.global'
@@ -69,6 +70,95 @@ function createWindow() {
   }
 }
 
+function buildMenu() {
+  const template: MenuItemConstructorOptions[] = [
+    // macOS standard app menu
+    ...(process.platform === 'darwin'
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: 'about' },
+              { type: 'separator' },
+              { role: 'services' },
+              { type: 'separator' },
+              { role: 'hide' },
+              { role: 'hideOthers' },
+              { role: 'unhide' },
+              { type: 'separator' },
+              { role: 'quit' },
+            ] as MenuItemConstructorOptions[],
+          },
+        ]
+      : []),
+    {
+      label: 'Language',
+      submenu: [
+        {
+          label: 'English',
+          type: 'radio',
+          checked: true,
+          click: () => {
+            BrowserWindow.getAllWindows().forEach((w) => w.webContents.send('set-locale', 'en'))
+          },
+        },
+        {
+          label: '中文',
+          type: 'radio',
+          click: () => {
+            BrowserWindow.getAllWindows().forEach((w) => w.webContents.send('set-locale', 'zh-CN'))
+          },
+        },
+      ] as MenuItemConstructorOptions[],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectAll' },
+      ] as MenuItemConstructorOptions[],
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ] as MenuItemConstructorOptions[],
+    },
+    {
+      role: 'window',
+      submenu: [{ role: 'minimize' }, { role: 'close' }] as MenuItemConstructorOptions[],
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click: async () => {
+            const { shell } = await import('electron')
+            await shell.openExternal('https://github.com/YILS-LIN/short-video-factory')
+          },
+        },
+      ] as MenuItemConstructorOptions[],
+    },
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
 //关闭所有窗口后退出，macOS除外。在那里，这很常见
 //让应用程序及其菜单栏保持活动状态，直到用户退出
 //显式使用Cmd+Q。
@@ -101,4 +191,7 @@ app.whenReady().then(() => {
   app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
   // 允许本地网络请求
   app.commandLine.appendSwitch('disable-features', 'BlockInsecurePrivateNetworkRequests')
+
+  // Build application menu
+  buildMenu()
 })

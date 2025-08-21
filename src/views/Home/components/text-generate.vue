@@ -5,7 +5,7 @@
         <v-textarea
           class="h-full"
           v-model="appStore.prompt"
-          label="提示词"
+          :label="t('prompt.label')"
           counter
           persistent-counter
           no-resize
@@ -19,7 +19,7 @@
             :disabled="disabled"
             @click="handleGenerate"
           >
-            生成
+            {{ t('actions.generate') }}
           </v-btn>
           <v-btn
             v-else
@@ -29,51 +29,51 @@
             :disabled="disabled"
             @click="handleStopGenerate"
           >
-            停止
+            {{ t('actions.stop') }}
           </v-btn>
 
           <v-dialog v-model="configDialogShow" max-width="600" persistent>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn v-bind="activatorProps" :disabled="disabled"> 配置 </v-btn>
+              <v-btn v-bind="activatorProps" :disabled="disabled"> {{ t('actions.config') }} </v-btn>
             </template>
 
-            <v-card prepend-icon="mdi-text-box-edit-outline" title="配置大语言模型接口">
+            <v-card prepend-icon="mdi-text-box-edit-outline" :title="t('llm.configTitle')">
               <v-card-text>
                 <v-text-field
-                  label="模型名称"
+                  :label="t('llm.modelName')"
                   v-model="config.modelName"
                   required
                   clearable
                 ></v-text-field>
                 <v-text-field
-                  label="API 地址"
+                  :label="t('llm.apiUrl')"
                   v-model="config.apiUrl"
                   required
                   clearable
                 ></v-text-field>
                 <v-text-field
-                  label="API Key"
+                  :label="t('llm.apiKey')"
                   v-model="config.apiKey"
                   type="password"
                   required
                   clearable
                 ></v-text-field>
-                <small class="text-caption text-medium-emphasis">兼容任意 OpenAI 标准接口</small>
+                <small class="text-caption text-medium-emphasis">{{ t('llm.compatibleNote') }}</small>
               </v-card-text>
               <v-divider></v-divider>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text="关闭" variant="plain" @click="handleCloseDialog"></v-btn>
+                <v-btn :text="t('common.close')" variant="plain" @click="handleCloseDialog"></v-btn>
                 <v-btn
                   color="success"
-                  text="测试"
+                  :text="t('common.test')"
                   variant="tonal"
                   :loading="testStatus === TestStatusEnum.LOADING"
                   @click="handleTestConfig"
                 ></v-btn>
                 <v-btn
                   color="primary"
-                  text="保存"
+                  :text="t('common.save')"
                   variant="tonal"
                   @click="handleSaveConfig"
                 ></v-btn>
@@ -86,7 +86,7 @@
         <v-textarea
           class="h-full"
           v-model="outputText"
-          label="输出文案（可编辑）"
+          :label="t('output.label')"
           counter
           persistent-counter
           no-resize
@@ -102,9 +102,11 @@ import { nextTick, ref, toRaw } from 'vue'
 import { createOpenAI } from '@ai-sdk/openai'
 import { generateText, streamText } from 'ai'
 import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
 
 const toast = useToast()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 defineProps<{
   disabled?: boolean
@@ -116,8 +118,8 @@ const isGenerating = ref(false)
 const abortController = ref<AbortController | null>(null)
 const handleGenerate = async (oprions?: { noToast?: boolean }) => {
   if (!appStore.prompt) {
-    !oprions?.noToast && toast.warning('提示词不能为空')
-    throw new Error('提示词不能为空')
+    !oprions?.noToast && toast.warning(t('errors.promptRequired'))
+    throw new Error(t('errors.promptRequired') as string)
   }
 
   const openai = createOpenAI({
@@ -149,9 +151,7 @@ const handleGenerate = async (oprions?: { noToast?: boolean }) => {
       // @ts-ignore
       const errorMessage = error?.message || error?.error?.message
       !oprions?.noToast &&
-        toast.error(
-          `生成失败，请检查大模型配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
-        )
+        toast.error(`${t('errors.generateFailedPrefix')}\n${errorMessage ? 'Error: ' + errorMessage : ''}`)
       throw error
     }
   } finally {
@@ -197,15 +197,13 @@ const handleTestConfig = async () => {
     })
     console.log(`result`, result)
     testStatus.value = TestStatusEnum.SUCCESS
-    toast.success('大模型连接成功')
+    toast.success(t('llm.connectSuccess'))
   } catch (error) {
     console.log(error)
     testStatus.value = TestStatusEnum.ERROR
     // @ts-ignore
     const errorMessage = error?.message
-    toast.error(
-      `大模型连接失败，请检查配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
-    )
+    toast.error(`${t('llm.connectFailedPrefix')}\n${errorMessage ? 'Error: ' + errorMessage : ''}`)
   }
 }
 

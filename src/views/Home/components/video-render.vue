@@ -1,28 +1,28 @@
 <template>
   <div class="h-0 flex-1 relative">
     <div class="absolute top-1/12 w-full flex justify-center cursor-default select-none">
-      <v-chip v-if="appStore.renderStatus === RenderStatus.None"> 空闲，可以开始合成 </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.None"> {{ t('render.status.idle') }} </v-chip>
       <v-chip v-if="appStore.renderStatus === RenderStatus.GenerateText" variant="elevated">
-        正在使用 AI 大模型生成文案
+        {{ t('render.status.generatingText') }}
       </v-chip>
       <v-chip v-if="appStore.renderStatus === RenderStatus.SynthesizedSpeech" variant="elevated">
-        正在使用 TTS 合成语音
+        {{ t('render.status.synthesizingSpeech') }}
       </v-chip>
       <v-chip v-if="appStore.renderStatus === RenderStatus.SegmentVideo" variant="elevated">
-        正在处理分镜素材
+        {{ t('render.status.segmentingVideo') }}
       </v-chip>
       <v-chip v-if="appStore.renderStatus === RenderStatus.Rendering" variant="elevated">
-        正在渲染视频
+        {{ t('render.status.rendering') }}
       </v-chip>
       <v-chip
         v-if="appStore.renderStatus === RenderStatus.Completed"
         variant="elevated"
         color="success"
       >
-        渲染成功，可以开始下一个
+        {{ t('render.status.success') }}
       </v-chip>
       <v-chip v-if="appStore.renderStatus === RenderStatus.Failed" variant="elevated" color="error">
-        渲染失败，请重新尝试
+        {{ t('render.status.failed') }}
       </v-chip>
     </div>
 
@@ -46,7 +46,7 @@
             prepend-icon="mdi-rocket-launch"
             @click="emit('renderVideo')"
           >
-            开始合成
+            {{ t('render.startRender') }}
           </v-btn>
           <v-btn
             v-else
@@ -55,31 +55,31 @@
             prepend-icon="mdi-stop"
             @click="emit('cancelRender')"
           >
-            停止合成
+            {{ t('render.stopRender') }}
           </v-btn>
           <v-dialog v-model="configDialogShow" max-width="600" persistent>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn v-bind="activatorProps" :disabled="taskInProgress"> 合成配置 </v-btn>
+              <v-btn v-bind="activatorProps" :disabled="taskInProgress"> {{ t('actions.config') }} </v-btn>
             </template>
 
-            <v-card prepend-icon="mdi-text-box-edit-outline" title="配置合成选项">
+            <v-card prepend-icon="mdi-text-box-edit-outline" :title="t('dialogs.renderConfigTitle')">
               <v-card-text>
                 <div class="w-full flex gap-2 mb-4 items-center">
                   <v-text-field
-                    label="导出视频宽度"
+                    :label="t('render.output.width')"
                     v-model="config.outputSize.width"
                     hide-details
                   ></v-text-field>
                   <v-text-field
                     v-model="config.outputSize.height"
-                    label="导出视频高度"
+                    :label="t('render.output.height')"
                     hide-details
                     required
                   ></v-text-field>
                 </div>
                 <div class="w-full flex gap-2 mb-4 items-center">
                   <v-text-field
-                    label="导出文件名"
+                    :label="t('render.output.fileName')"
                     v-model="config.outputFileName"
                     hide-details
                     required
@@ -88,7 +88,7 @@
                   <v-text-field
                     class="w-[120px] flex-none"
                     v-model="config.outputFileExt"
-                    label="导出格式"
+                    :label="t('render.output.format')"
                     hide-details
                     readonly
                     required
@@ -96,7 +96,7 @@
                 </div>
                 <div class="w-full flex gap-2 mb-4 items-center">
                   <v-text-field
-                    label="导出文件夹"
+                    :label="t('render.output.folder')"
                     v-model="config.outputPath"
                     hide-details
                     readonly
@@ -107,12 +107,12 @@
                     prepend-icon="mdi-folder-open"
                     @click="handleSelectOutputFolder"
                   >
-                    选择
+                    {{ t('common.select') }}
                   </v-btn>
                 </div>
                 <div class="w-full flex gap-2 mb-2 items-center">
                   <v-text-field
-                    label="背景音乐文件夹（.mp3格式，从中随机选取）"
+                    :label="t('render.bgmFolderLabel')"
                     v-model="config.bgmPath"
                     hide-details
                     readonly
@@ -124,17 +124,17 @@
                     prepend-icon="mdi-folder-open"
                     @click="handleSelectBgmFolder"
                   >
-                    选择
+                    {{ t('common.select') }}
                   </v-btn>
                 </div>
               </v-card-text>
               <v-divider></v-divider>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text="关闭" variant="plain" @click="handleCloseDialog"></v-btn>
+                <v-btn :text="t('common.close')" variant="plain" @click="handleCloseDialog"></v-btn>
                 <v-btn
                   color="primary"
-                  text="保存"
+                  :text="t('common.save')"
                   variant="tonal"
                   @click="handleSaveConfig"
                 ></v-btn>
@@ -147,7 +147,7 @@
       <div class="w-full flex justify-center">
         <v-switch
           v-model="appStore.autoBatch"
-          label="自动批量合成"
+          :label="t('render.autoBatch')"
           color="indigo"
           density="compact"
           hide-details
@@ -158,7 +158,7 @@
 
     <div class="absolute bottom-2 w-full flex justify-center text-sm">
       <span class="text-indigo cursor-pointer select-none" @click="handleOpenHomePage">
-        Powered by YILS（博客地址：https://yils.blog）
+        {{ t('footer.poweredBy') }}
       </span>
     </div>
   </div>
@@ -166,9 +166,11 @@
 
 <script lang="ts" setup>
 import { ref, toRaw, nextTick, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { RenderStatus, useAppStore } from '@/store'
 
 const appStore = useAppStore()
+const { t } = useI18n()
 
 const emit = defineEmits<{
   (e: 'renderVideo'): void
@@ -206,7 +208,7 @@ const handleSaveConfig = () => {
 // 选择文件夹
 const handleSelectOutputFolder = async () => {
   const folderPath = await window.electron.selectFolder({
-    title: '选择视频导出文件夹',
+    title: t('dialogs.selectOutputFolderTitle'),
     defaultPath: config.value.outputPath,
   })
   console.log('用户选择视频导出文件夹，绝对路径：', folderPath)
@@ -216,7 +218,7 @@ const handleSelectOutputFolder = async () => {
 }
 const handleSelectBgmFolder = async () => {
   const folderPath = await window.electron.selectFolder({
-    title: '选择背景音乐文件夹',
+    title: t('dialogs.selectBgmFolderTitle'),
     defaultPath: config.value.bgmPath,
   })
   console.log('用户选择背景音乐文件夹，绝对路径：', folderPath)

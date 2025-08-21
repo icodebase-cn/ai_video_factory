@@ -35,6 +35,7 @@ import TtsControl from './components/tts-control.vue'
 import VideoRender from './components/video-render.vue'
 
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { RenderStatus, useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
 import { ListFilesFromFolderRecord } from '~/electron/types'
@@ -42,6 +43,7 @@ import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 // 渲染合成视频
 const TextGenerateInstance = ref<InstanceType<typeof TextGenerate> | null>()
@@ -49,15 +51,15 @@ const VideoManageInstance = ref<InstanceType<typeof VideoManage> | null>()
 const TtsControlInstance = ref<InstanceType<typeof TtsControl> | null>()
 const handleRenderVideo = async () => {
   if (!appStore.renderConfig.outputFileName) {
-    toast.warning('请先配置导出文件名')
+    toast.warning(t('errors.outputFileNameRequired'))
     return
   }
   if (!appStore.renderConfig.outputPath) {
-    toast.warning('请先配置导出文件夹')
+    toast.warning(t('errors.outputPathRequired'))
     return
   }
   if (!appStore.renderConfig.outputSize?.width || !appStore.renderConfig.outputSize?.height) {
-    toast.warning('请先配置导出分辨率（宽高）')
+    toast.warning(t('errors.outputSizeRequired'))
     return
   }
 
@@ -71,7 +73,7 @@ const handleRenderVideo = async () => {
     }
   } catch (error) {
     console.log('获取背景音乐列表失败', error)
-    toast.error('获取背景音乐列表失败，请检查文件夹是否存在')
+    toast.error(t('errors.bgmListFailed'))
   }
 
   try {
@@ -92,10 +94,10 @@ const handleRenderVideo = async () => {
       withCaption: true,
     })
     if (ttsResult?.duration === undefined) {
-      throw new Error('语音合成失败，音频文件损坏')
+      throw new Error(t('errors.ttsFailedCorrupt'))
     }
     if (ttsResult?.duration === 0) {
-      throw new Error('语音时长为0秒，检查TTS语音合成配置及网络连接是否正常')
+      throw new Error(t('errors.ttsZeroDuration'))
     }
 
     // 获取视频片段
@@ -132,11 +134,11 @@ const handleRenderVideo = async () => {
         appStore.renderConfig.outputFileExt,
     })
 
-    toast.success('视频合成成功')
+    toast.success(t('success.renderSuccess'))
     appStore.updateRenderStatus(RenderStatus.Completed)
 
     if (appStore.autoBatch) {
-      toast.info('开始合成下一个')
+      toast.info(t('info.batchNext'))
       TextGenerateInstance.value?.clearOutputText()
       handleRenderVideo()
     }
@@ -146,9 +148,7 @@ const handleRenderVideo = async () => {
 
     // @ts-ignore
     const errorMessage = error?.message || error?.error?.message
-    toast.error(
-      `视频合成失败，请检查各项配置是否正确\n${errorMessage ? '错误信息：“' + errorMessage + '”' : ''}`,
-    )
+    toast.error(`${t('errors.renderFailedPrefix')}${errorMessage ? '\n' + errorMessage : ''}`)
     appStore.updateRenderStatus(RenderStatus.Failed)
   }
 }
@@ -173,7 +173,7 @@ const handleCancelRender = () => {
       break
   }
   appStore.updateRenderStatus(RenderStatus.None)
-  toast.info('视频合成已终止')
+  toast.info(t('info.renderCanceled'))
 }
 </script>
 

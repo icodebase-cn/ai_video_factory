@@ -5,16 +5,16 @@
         <v-combobox
           v-model="appStore.language"
           density="comfortable"
-          label="语言"
+          :label="t('tts.language')"
           :items="appStore.languageList"
-          no-data-text="无数据"
+          :no-data-text="t('common.noData')"
           @update:model-value="clearVoice"
         ></v-combobox>
         <v-select
           v-model="appStore.gender"
           density="comfortable"
-          label="性别"
-          :items="appStore.genderList"
+          :label="t('tts.gender')"
+          :items="genderItems"
           item-title="label"
           item-value="value"
           @update:model-value="clearVoice"
@@ -22,24 +22,24 @@
         <v-select
           v-model="appStore.voice"
           density="comfortable"
-          label="声音"
+          :label="t('tts.voice')"
           :items="filteredVoicesList"
           item-title="FriendlyName"
           return-object
-          no-data-text="请先选择语言和性别"
+          :no-data-text="t('tts.selectLanguageGenderFirst')"
         ></v-select>
         <v-select
           v-model="appStore.speed"
           density="comfortable"
-          label="语速"
-          :items="appStore.speedList"
+          :label="t('tts.speed')"
+          :items="speedItems"
           item-title="label"
           item-value="value"
         ></v-select>
         <v-text-field
           v-model="appStore.tryListeningText"
           density="comfortable"
-          label="试听文本"
+          :label="t('tts.tryText')"
         ></v-text-field>
         <v-btn
           class="mb-2"
@@ -49,7 +49,7 @@
           :disabled="disabled"
           @click="handleTryListening"
         >
-          试听
+          {{ t('tts.tryListen') }}
         </v-btn>
       </v-sheet>
     </v-form>
@@ -58,11 +58,13 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 defineProps<{
   disabled?: boolean
@@ -70,12 +72,12 @@ defineProps<{
 
 const configValid = () => {
   if (!appStore.voice) {
-    toast.warning('请选择一个声音')
+    toast.warning(t('tts.selectVoiceWarning'))
     return false
   }
 
   if (!appStore.tryListeningText) {
-    toast.warning('试听文本不能为空')
+    toast.warning(t('tts.tryTextEmptyWarning'))
     return false
   }
 
@@ -97,10 +99,10 @@ const handleTryListening = async () => {
     })
     const audio = new Audio(`data:audio/mp3;base64,${speech}`)
     audio.play()
-    toast.info('播放试听语音')
+    toast.info(t('tts.playTryAudio'))
   } catch (error) {
     console.log('试听语音合成失败', error)
-    toast.error('试听语音合成失败，请检查网络')
+    toast.error(t('tts.trySynthesisFailedNetwork'))
   } finally {
     tryListeningLoading.value = false
   }
@@ -116,13 +118,28 @@ const filteredVoicesList = computed(() => {
   )
 })
 
+const genderItems = computed(() => {
+  return [
+    { label: t('tts.genderMale'), value: 'Male' },
+    { label: t('tts.genderFemale'), value: 'Female' },
+  ]
+})
+
+const speedItems = computed(() => {
+  return [
+    { label: t('tts.speedSlow'), value: -30 },
+    { label: t('tts.speedMedium'), value: 0 },
+    { label: t('tts.speedFast'), value: 30 },
+  ]
+})
+
 const fetchVoices = async () => {
   try {
     appStore.originalVoicesList = await window.electron.edgeTtsGetVoiceList()
     console.log('EdgeTTS语音列表更新：', appStore.originalVoicesList)
   } catch (error) {
     console.log('获取EdgeTTS语音列表失败', error)
-    toast.error('获取EdgeTTS语音列表失败，请检查网络')
+    toast.error(t('errors.edgeTtsListFailed'))
   }
 }
 onMounted(async () => {
@@ -133,7 +150,7 @@ onMounted(async () => {
 })
 
 const synthesizedSpeechToFile = async (option: { text: string; withCaption?: boolean }) => {
-  if (!configValid()) throw new Error('TTS语音合成配置无效')
+  if (!configValid()) throw new Error(t('errors.ttsConfigInvalid'))
 
   try {
     const result = await window.electron.edgeTtsSynthesizeToFile({
@@ -147,7 +164,7 @@ const synthesizedSpeechToFile = async (option: { text: string; withCaption?: boo
     return result
   } catch (error) {
     console.log('语音合成失败', error)
-    throw error
+    throw new Error(t('errors.ttsSynthesisFailed'))
   }
 }
 

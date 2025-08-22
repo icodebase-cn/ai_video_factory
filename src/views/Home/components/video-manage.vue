@@ -5,7 +5,7 @@
         <div class="flex gap-2 mb-2">
           <v-text-field
             v-model="appStore.videoAssetsFolder"
-            label="分镜视频素材文件夹"
+            :label="t('videoManage.assetsFolderLabel')"
             density="compact"
             hide-details
             readonly
@@ -17,7 +17,7 @@
             :disabled="disabled"
             @click="handleSelectFolder"
           >
-            选择
+            {{ t('common.select') }}
           </v-btn>
         </div>
 
@@ -43,8 +43,8 @@
           </div>
           <v-empty-state
             v-else
-            headline="暂无内容"
-            text="从上面选择一个包含足够分镜素材的文件夹"
+            :headline="t('empty.noContent')"
+            :text="t('empty.hintSelectFolder')"
           ></v-empty-state>
         </div>
 
@@ -56,7 +56,7 @@
             :loading="refreshAssetsLoading"
             @click="refreshAssets"
           >
-            刷新素材库
+            {{ t('actions.refreshAssets') }}
           </v-btn>
         </div>
       </v-sheet>
@@ -66,6 +66,7 @@
 
 <script lang="ts" setup>
 import { ref, toRaw } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
 import { ListFilesFromFolderRecord } from '~/electron/types'
@@ -75,6 +76,7 @@ import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 defineProps<{
   disabled?: boolean
@@ -83,7 +85,7 @@ defineProps<{
 // 选择文件夹
 const handleSelectFolder = async () => {
   const folderPath = await window.electron.selectFolder({
-    title: '选择分镜素材文件夹',
+    title: t('dialogs.selectAssetsFolderTitle'),
     defaultPath: appStore.videoAssetsFolder,
   })
   console.log('用户选择分镜素材文件夹，绝对路径：', folderPath)
@@ -109,16 +111,16 @@ const refreshAssets = async () => {
     videoAssets.value = assets.filter((asset) => asset.name.endsWith('.mp4'))
     if (!videoAssets.value.length) {
       if (assets.length) {
-        toast.warning('选择的文件夹中不包含MP4视频文件')
+        toast.warning(t('videoManage.noMp4InFolder'))
       } else {
-        toast.warning('选择的文件夹为空')
+        toast.warning(t('videoManage.emptyFolder'))
       }
     } else {
-      toast.success('素材读取成功')
+      toast.success(t('videoManage.readSuccess'))
     }
   } catch (error) {
     console.log(error)
-    toast.error('素材读取失败，请检查文件夹是否存在')
+    toast.error(t('videoManage.readFailed'))
   } finally {
     refreshAssetsLoading.value = false
   }
@@ -130,7 +132,7 @@ const videoInfoList = ref<VideoInfo[]>([])
 const getVideoSegments = (options: { duration: number }) => {
   // 判断素材库是否满足时长要求
   if (videoInfoList.value.reduce((pre, cur) => pre + cur.duration, 0) < options.duration) {
-    throw new Error('素材总时长不足')
+    throw new Error(t('errors.assetsDurationInsufficient'))
   }
 
   // 搜集随机素材片段

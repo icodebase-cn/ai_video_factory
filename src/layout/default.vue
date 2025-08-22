@@ -2,7 +2,7 @@
   <div class="layout-container">
     <div class="logo" v-if="!route.meta.hideAppIcon">
       <img src="/icon.png" alt="" />
-      <span>{{ GlobalSetting.appName }}</span>
+      <span>{{ t('app.name') }}</span>
     </div>
     <div class="window-control-bar">
       <div class="control-btn control-btn-min" @click="handleMin">
@@ -21,12 +21,13 @@
 </template>
 
 <script lang="ts" setup>
-import GlobalSetting from '../../setting.global'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const windowIsMaxed = ref(false)
+const { t } = useI18n()
 
 window.addEventListener('resize', async () => {
   windowIsMaxed.value = await window.electron.isWinMaxed()

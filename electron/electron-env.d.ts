@@ -24,6 +24,11 @@ declare namespace NodeJS {
 // 在渲染器进程中使用，在 `preload.ts` 中暴露方法
 interface Window {
   ipcRenderer: Pick<import('electron').IpcRenderer, 'on' | 'once' | 'off' | 'send' | 'invoke'>
+  i18n: {
+    getLocalesPath: () => Promise<string>
+    getLanguage: () => Promise<string>
+    changeLanguage: (lng: string) => Promise<string>
+  }
   electron: {
     isWinMaxed: () => Promise<boolean>
     winMin: () => void

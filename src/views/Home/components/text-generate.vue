@@ -34,7 +34,9 @@
 
           <v-dialog v-model="configDialogShow" max-width="600" persistent>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn v-bind="activatorProps" :disabled="disabled"> {{ t('actions.config') }} </v-btn>
+              <v-btn v-bind="activatorProps" :disabled="disabled">
+                {{ t('actions.config') }}
+              </v-btn>
             </template>
 
             <v-card prepend-icon="mdi-text-box-edit-outline" :title="t('llm.configTitle')">
@@ -58,7 +60,9 @@
                   required
                   clearable
                 ></v-text-field>
-                <small class="text-caption text-medium-emphasis">{{ t('llm.compatibleNote') }}</small>
+                <small class="text-caption text-medium-emphasis">{{
+                  t('llm.compatibleNote')
+                }}</small>
               </v-card-text>
               <v-divider></v-divider>
               <v-card-actions>
@@ -102,11 +106,11 @@ import { nextTick, ref, toRaw } from 'vue'
 import { createOpenAI } from '@ai-sdk/openai'
 import { generateText, streamText } from 'ai'
 import { useToast } from 'vue-toastification'
-import { useI18n } from 'vue-i18n'
+import { useTranslation } from 'i18next-vue'
 
 const toast = useToast()
 const appStore = useAppStore()
-const { t } = useI18n()
+const { t } = useTranslation()
 
 defineProps<{
   disabled?: boolean
@@ -151,7 +155,9 @@ const handleGenerate = async (oprions?: { noToast?: boolean }) => {
       // @ts-ignore
       const errorMessage = error?.message || error?.error?.message
       !oprions?.noToast &&
-        toast.error(`${t('errors.generateFailedPrefix')}\n${errorMessage ? 'Error: ' + errorMessage : ''}`)
+        toast.error(
+          `${t('errors.generateFailedPrefix')}\n${errorMessage ? 'Error: ' + errorMessage : ''}`,
+        )
       throw error
     }
   } finally {

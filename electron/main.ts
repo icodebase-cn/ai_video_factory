@@ -1,10 +1,13 @@
 import { app, BrowserWindow, screen, Menu } from 'electron'
 import type { MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
+import { isDev } from './lib/is-dev'
 import path from 'node:path'
-import GlobalSetting from '../setting.global'
 import initIPC from './ipc'
 import { initSqlite } from './sqlite'
+import i18next from 'i18next'
+import { changeAppLanguage, initI18n } from './i18n'
+import { i18nLanguages } from './i18n/common-options'
 import useCookieAllowCrossSite from './lib/cookie-allow-cross-site'
 
 // 用于引入 CommonJS 模块的方法
@@ -29,9 +32,7 @@ export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
-  ? path.join(process.env.APP_ROOT, 'public')
-  : RENDERER_DIST
+process.env.VITE_PUBLIC = isDev ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
 
@@ -39,7 +40,6 @@ function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'icon.png'),
-    title: GlobalSetting.appName,
     width: Math.ceil(width * 0.8),
     height: Math.ceil(height * 0.8),
     minWidth: 800,
@@ -76,76 +76,63 @@ function buildMenu() {
     ...(process.platform === 'darwin'
       ? [
           {
-            label: app.name,
+            label: i18next.t('app.name'),
             submenu: [
-              { role: 'about' },
+              {
+                label: i18next.t('menu.app.about'),
+                click: async () => {
+                  const { shell } = await import('electron')
+                  await shell.openExternal('https://github.com/YILS-LIN/short-video-factory')
+                },
+              },
               { type: 'separator' },
-              { role: 'services' },
+              { label: i18next.t('menu.app.services'), role: 'services' },
               { type: 'separator' },
-              { role: 'hide' },
-              { role: 'hideOthers' },
-              { role: 'unhide' },
+              { label: i18next.t('menu.app.hide'), role: 'hide' },
+              { label: i18next.t('menu.app.hideOthers'), role: 'hideOthers' },
+              { label: i18next.t('menu.app.unhide'), role: 'unhide' },
               { type: 'separator' },
-              { role: 'quit' },
+              { label: i18next.t('menu.app.quit'), role: 'quit' },
             ] as MenuItemConstructorOptions[],
           },
         ]
       : []),
     {
-      label: 'Language',
-      submenu: [
-        {
-          label: 'English',
-          type: 'radio',
-          checked: true,
-          click: () => {
-            BrowserWindow.getAllWindows().forEach((w) => w.webContents.send('set-locale', 'en'))
-          },
+      label: i18next.t('menu.language'),
+      submenu: i18nLanguages.map((lng) => ({
+        label: lng.name,
+        type: 'radio',
+        checked: i18next.language === lng.code,
+        click: () => {
+          changeAppLanguage(lng.code)
         },
-        {
-          label: '中文',
-          type: 'radio',
-          click: () => {
-            BrowserWindow.getAllWindows().forEach((w) => w.webContents.send('set-locale', 'zh-CN'))
-          },
-        },
-      ] as MenuItemConstructorOptions[],
+      })) as MenuItemConstructorOptions[],
     },
     {
-      label: 'Edit',
+      label: i18next.t('menu.view.root'),
       submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
+        { role: 'toggleDevTools', visible: false },
+        { label: i18next.t('menu.view.resetZoom'), role: 'resetZoom' },
+        { label: i18next.t('menu.view.zoomIn'), role: 'zoomIn' },
+        { label: i18next.t('menu.view.zoomOut'), role: 'zoomOut' },
         { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'selectAll' },
+        { label: i18next.t('menu.view.toggleFullscreen'), role: 'togglefullscreen' },
       ] as MenuItemConstructorOptions[],
     },
     {
-      label: 'View',
-      submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools' },
-        { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' },
-      ] as MenuItemConstructorOptions[],
-    },
-    {
+      label: i18next.t('menu.window.root'),
       role: 'window',
-      submenu: [{ role: 'minimize' }, { role: 'close' }] as MenuItemConstructorOptions[],
+      submenu: [
+        { label: i18next.t('menu.window.minimize'), role: 'minimize' },
+        { label: i18next.t('menu.window.close'), role: 'close' },
+      ] as MenuItemConstructorOptions[],
     },
     {
+      label: i18next.t('menu.help.root'),
       role: 'help',
       submenu: [
         {
-          label: 'Learn More',
+          label: i18next.t('menu.help.learnMore'),
           click: async () => {
             const { shell } = await import('electron')
             await shell.openExternal('https://github.com/YILS-LIN/short-video-factory')
@@ -181,9 +168,14 @@ app.on('activate', () => {
 // app.disableHardwareAcceleration();
 
 app.whenReady().then(() => {
-  createWindow()
   initSqlite()
-  initIPC(win as BrowserWindow)
+  initI18n()
+  initIPC()
+  createWindow()
+
+  i18next.on('languageChanged', () => {
+    buildMenu()
+  })
 
   // 允许跨站请求携带cookie
   useCookieAllowCrossSite()
@@ -191,7 +183,4 @@ app.whenReady().then(() => {
   app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
   // 允许本地网络请求
   app.commandLine.appendSwitch('disable-features', 'BlockInsecurePrivateNetworkRequests')
-
-  // Build application menu
-  buildMenu()
 })

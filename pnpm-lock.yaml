@@ -17,15 +17,18 @@ importers:
       ffmpeg-static:
         specifier: ^5.2.0
         version: 5.2.0
+      i18next:
+        specifier: ^25.4.0
+        version: 25.4.0(typescript@5.6.2)
+      i18next-fs-backend:
+        specifier: ^2.3.2
+        version: 2.3.2
       music-metadata:
         specifier: ^11.7.3
         version: 11.7.3
       subtitle:
         specifier: 4.2.2-alpha.0
         version: 4.2.2-alpha.0
-      vue-i18n:
-        specifier: ^9.14.0
-        version: 9.14.5(vue@3.5.17(typescript@5.6.2))
       ws:
         specifier: ^8.18.3
         version: 8.18.3(bufferutil@4.0.9)(utf-8-validate@6.0.5)
@@ -66,6 +69,12 @@ importers:
       electron-builder:
         specifier: ^24.13.3
         version: 24.13.3(electron-builder-squirrel-windows@24.13.3)
+      i18next-http-backend:
+        specifier: ^3.0.2
+        version: 3.0.2
+      i18next-vue:
+        specifier: ^5.3.0
+        version: 5.3.0(i18next@25.4.0(typescript@5.6.2))(vue@3.5.17(typescript@5.6.2))
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -296,6 +305,10 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
+  '@babel/runtime@7.28.3':
+    resolution: {integrity: sha512-9uIQ10o0WGdpP6GDhXcdOJPJuDgFtIDtN/9+ArJQ2NAfAmiuhTQdzkaTGR33v43GYS2UrSA0eX2pPPHoFVvpxA==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/template@7.27.2':
     resolution: {integrity: sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==}
     engines: {node: '>=6.9.0'}
@@ -499,18 +512,6 @@ packages:
 
   '@iconify/utils@2.3.0':
     resolution: {integrity: sha512-GmQ78prtwYW6EtzXRU1rY+KwOKfz32PD7iJh6Iyqw68GiKuoZ2A6pRtzWONz5VQJbp50mEjXh/7NkumtrAgRKA==}
-
-  '@intlify/core-base@9.14.5':
-    resolution: {integrity: sha512-5ah5FqZG4pOoHjkvs8mjtv+gPKYU0zCISaYNjBNNqYiaITxW8ZtVih3GS/oTOqN8d9/mDLyrjD46GBApNxmlsA==}
-    engines: {node: '>= 16'}
-
-  '@intlify/message-compiler@9.14.5':
-    resolution: {integrity: sha512-IHzgEu61/YIpQV5Pc3aRWScDcnFKWvQA9kigcINcCBXN8mbW+vk9SK+lDxA6STzKQsVJxUPg9ACC52pKKo3SVQ==}
-    engines: {node: '>= 16'}
-
-  '@intlify/shared@9.14.5':
-    resolution: {integrity: sha512-9gB+E53BYuAEMhbCAxVgG38EZrk59sxBtv3jSizNL2hEWlgjBjAw1AwpLHtNaeda12pe6W20OGEa0TwuMSRbyQ==}
-    engines: {node: '>= 16'}
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -1380,6 +1381,9 @@ packages:
     engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
     hasBin: true
 
+  cross-fetch@4.0.0:
+    resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
+
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -1824,6 +1828,26 @@ packages:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
 
+  i18next-fs-backend@2.3.2:
+    resolution: {integrity: sha512-LIwUlkqDZnUI8lnUxBnEj8K/FrHQTT/Sc+1rvDm9E8YvvY5YxzoEAASNx+W5M9DfD5s77lI5vSAFWeTp26B/3Q==}
+
+  i18next-http-backend@3.0.2:
+    resolution: {integrity: sha512-PdlvPnvIp4E1sYi46Ik4tBYh/v/NbYfFFgTjkwFl0is8A18s7/bx9aXqsrOax9WUbeNS6mD2oix7Z0yGGf6m5g==}
+
+  i18next-vue@5.3.0:
+    resolution: {integrity: sha512-X5gYF1R9FadUdRyIze6p+mU4+kztIRWb1SYeoegB0eFBt/lDA++i0A235enWq5qdrRpWZIHlLV8gd/D5xakOsw==}
+    peerDependencies:
+      i18next: '>=23'
+      vue: ^3.4.38
+
+  i18next@25.4.0:
+    resolution: {integrity: sha512-UH5aiamXsO3cfrZFurCHiB6YSs3C+s+XY9UaJllMMSbmaoXILxFgqDEZu4NbfzJFjmUo3BNMa++Rjkr3ofjfLw==}
+    peerDependencies:
+      typescript: ^5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   iconv-corefoundation@1.1.7:
     resolution: {integrity: sha512-T10qvkw0zz4wnm560lOEg0PovVqUXuOFhhHAkixw8/sycy7TJt7v/RrkEKEQnAw2viPSJu6iAkErxnzR0g8PpQ==}
     engines: {node: ^8.11.2 || >=10}
@@ -2151,6 +2175,15 @@ packages:
 
   node-fetch-native@1.6.6:
     resolution: {integrity: sha512-8Mc2HhqPdlIfedsuZoc3yioPuzp6b+L5jRCRY1QzuWZh2EGJVQrGppC6V6cF0bLdbW0+O2YpqCA25aF/1lvipQ==}
+
+  node-fetch@2.7.0:
+    resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
+    engines: {node: 4.x || >=6.0.0}
+    peerDependencies:
+      encoding: ^0.1.0
+    peerDependenciesMeta:
+      encoding:
+        optional: true
 
   node-gyp-build@4.8.4:
     resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
@@ -2597,6 +2630,9 @@ packages:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
 
+  tr46@0.0.3:
+    resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
+
   truncate-utf8-bytes@1.0.2:
     resolution: {integrity: sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ==}
 
@@ -2769,12 +2805,6 @@ packages:
     peerDependencies:
       vue: ^3.4.37
 
-  vue-i18n@9.14.5:
-    resolution: {integrity: sha512-0jQ9Em3ymWngyiIkj0+c/k7WgaPO+TNzjKSNq9BvBQaKJECqn9cd9fL4tkDhB5G1QBskGl9YxxbDAhgbFtpe2g==}
-    engines: {node: '>= 16'}
-    peerDependencies:
-      vue: ^3.0.0
-
   vue-router@4.5.1:
     resolution: {integrity: sha512-ogAF3P97NPm8fJsE4by9dwSYtDwXIY1nFY9T6DyQnGHd1E2Da94w9JIolpe42LJGIl0DwOHBi8TcRPlPGwbTtw==}
     peerDependencies:
@@ -2814,6 +2844,12 @@ packages:
         optional: true
       webpack-plugin-vuetify:
         optional: true
+
+  webidl-conversions@3.0.1:
+    resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
+
+  whatwg-url@5.0.0:
+    resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -3104,6 +3140,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/runtime@7.28.3': {}
+
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -3282,18 +3320,6 @@ snapshots:
       mlly: 1.7.4
     transitivePeerDependencies:
       - supports-color
-
-  '@intlify/core-base@9.14.5':
-    dependencies:
-      '@intlify/message-compiler': 9.14.5
-      '@intlify/shared': 9.14.5
-
-  '@intlify/message-compiler@9.14.5':
-    dependencies:
-      '@intlify/shared': 9.14.5
-      source-map-js: 1.2.1
-
-  '@intlify/shared@9.14.5': {}
 
   '@isaacs/balanced-match@4.0.1': {}
 
@@ -4289,6 +4315,12 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.6
 
+  cross-fetch@4.0.0:
+    dependencies:
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -4822,6 +4854,25 @@ snapshots:
 
   human-signals@8.0.1: {}
 
+  i18next-fs-backend@2.3.2: {}
+
+  i18next-http-backend@3.0.2:
+    dependencies:
+      cross-fetch: 4.0.0
+    transitivePeerDependencies:
+      - encoding
+
+  i18next-vue@5.3.0(i18next@25.4.0(typescript@5.6.2))(vue@3.5.17(typescript@5.6.2)):
+    dependencies:
+      i18next: 25.4.0(typescript@5.6.2)
+      vue: 3.5.17(typescript@5.6.2)
+
+  i18next@25.4.0(typescript@5.6.2):
+    dependencies:
+      '@babel/runtime': 7.28.3
+    optionalDependencies:
+      typescript: 5.6.2
+
   iconv-corefoundation@1.1.7:
     dependencies:
       cli-truncate: 2.1.0
@@ -5099,6 +5150,10 @@ snapshots:
     optional: true
 
   node-fetch-native@1.6.6: {}
+
+  node-fetch@2.7.0:
+    dependencies:
+      whatwg-url: 5.0.0
 
   node-gyp-build@4.8.4:
     optional: true
@@ -5571,6 +5626,8 @@ snapshots:
 
   totalist@3.0.1: {}
 
+  tr46@0.0.3: {}
+
   truncate-utf8-bytes@1.0.2:
     dependencies:
       utf8-byte-length: 1.0.5
@@ -5745,13 +5802,6 @@ snapshots:
     dependencies:
       vue: 3.5.17(typescript@5.6.2)
 
-  vue-i18n@9.14.5(vue@3.5.17(typescript@5.6.2)):
-    dependencies:
-      '@intlify/core-base': 9.14.5
-      '@intlify/shared': 9.14.5
-      '@vue/devtools-api': 6.6.4
-      vue: 3.5.17(typescript@5.6.2)
-
   vue-router@4.5.1(vue@3.5.17(typescript@5.6.2)):
     dependencies:
       '@vue/devtools-api': 6.6.4
@@ -5782,6 +5832,13 @@ snapshots:
       vue: 3.5.17(typescript@5.6.2)
     optionalDependencies:
       typescript: 5.6.2
+
+  webidl-conversions@3.0.1: {}
+
+  whatwg-url@5.0.0:
+    dependencies:
+      tr46: 0.0.3
+      webidl-conversions: 3.0.1
 
   which@2.0.2:
     dependencies:

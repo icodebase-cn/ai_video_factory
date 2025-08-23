@@ -1,7 +1,9 @@
 <template>
   <div class="h-0 flex-1 relative">
     <div class="absolute top-1/12 w-full flex justify-center cursor-default select-none">
-      <v-chip v-if="appStore.renderStatus === RenderStatus.None"> {{ t('render.status.idle') }} </v-chip>
+      <v-chip v-if="appStore.renderStatus === RenderStatus.None">
+        {{ t('render.status.idle') }}
+      </v-chip>
       <v-chip v-if="appStore.renderStatus === RenderStatus.GenerateText" variant="elevated">
         {{ t('render.status.generatingText') }}
       </v-chip>
@@ -59,10 +61,15 @@
           </v-btn>
           <v-dialog v-model="configDialogShow" max-width="600" persistent>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn v-bind="activatorProps" :disabled="taskInProgress"> {{ t('actions.config') }} </v-btn>
+              <v-btn v-bind="activatorProps" :disabled="taskInProgress">
+                {{ t('actions.config') }}
+              </v-btn>
             </template>
 
-            <v-card prepend-icon="mdi-text-box-edit-outline" :title="t('dialogs.renderConfigTitle')">
+            <v-card
+              prepend-icon="mdi-text-box-edit-outline"
+              :title="t('dialogs.renderConfigTitle')"
+            >
               <v-card-text>
                 <div class="w-full flex gap-2 mb-4 items-center">
                   <v-text-field
@@ -166,11 +173,11 @@
 
 <script lang="ts" setup>
 import { ref, toRaw, nextTick, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useTranslation } from 'i18next-vue'
 import { RenderStatus, useAppStore } from '@/store'
 
 const appStore = useAppStore()
-const { t } = useI18n()
+const { t } = useTranslation()
 
 const emit = defineEmits<{
   (e: 'renderVideo'): void

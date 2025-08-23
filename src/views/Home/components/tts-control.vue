@@ -58,13 +58,13 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
+import { useTranslation } from 'i18next-vue'
 
 const toast = useToast()
 const appStore = useAppStore()
-const { t } = useI18n()
+const { t } = useTranslation()
 
 defineProps<{
   disabled?: boolean

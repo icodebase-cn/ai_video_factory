@@ -15,6 +15,12 @@ export enum RenderStatus {
 export const useAppStore = defineStore(
   'app',
   () => {
+    // 国际化区域设置
+    const locale = ref('')
+    const updateLocale = (newLocale: string) => {
+      locale.value = newLocale
+    }
+
     // 大模型文案生成
     const prompt = ref('')
     const llmConfig = ref({
@@ -72,6 +78,9 @@ export const useAppStore = defineStore(
     }
 
     return {
+      locale,
+      updateLocale,
+
       prompt,
       llmConfig,
       updateLLMConfig,

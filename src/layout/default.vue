@@ -5,6 +5,32 @@
       <span>{{ t('app.name') }}</span>
     </div>
     <div class="window-control-bar">
+      <div class="window-no-drag">
+        <v-menu location="bottom right">
+          <template v-slot:activator="{ props }">
+            <div class="control-btn control-btn-translate" v-bind="props">
+              <v-icon icon="mdi-translate" size="small" />
+            </div>
+          </template>
+          <v-list
+            class="p-2 space-y-1"
+            activatable
+            :activated="i18next.language"
+            @update:activated="handleChangeLanguage"
+          >
+            <v-list-item
+              v-for="(item, index) in i18nLanguages"
+              :key="index"
+              :value="item.code"
+              color="primary"
+              density="compact"
+              rounded
+            >
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
       <div class="control-btn control-btn-min" @click="handleMin">
         <v-icon icon="mdi-window-minimize" size="small" />
       </div>
@@ -23,11 +49,24 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { useTranslation } from 'i18next-vue'
+import { i18nLanguages } from '~/electron/i18n/common-options'
+
+const { i18next, t } = useTranslation()
+// const lang = ref(i18next.language)
+// console.log('i18next.language', i18next.language)
+
+document.title = t('app.name')
 
 const route = useRoute()
 const windowIsMaxed = ref(false)
-const { t } = useI18n()
+
+const handleChangeLanguage = (lng: unknown) => {
+  console.log('handleChangeLanguage', lng)
+  if ((lng as string[])[0]) {
+    window.i18n.changeLanguage((lng as string[])[0])
+  }
+}
 
 window.addEventListener('resize', async () => {
   windowIsMaxed.value = await window.electron.isWinMaxed()

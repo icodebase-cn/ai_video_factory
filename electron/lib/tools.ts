@@ -2,8 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { app } from 'electron'
 
-// import packageJson from '~/package.json'
-
 /**
  * 生成有序的唯一文件名，用于处理文件已存在的情况
  */

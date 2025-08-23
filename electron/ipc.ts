@@ -20,7 +20,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, 'public')
   : RENDERER_DIST
 
-export default function initIPC(win: BrowserWindow) {
+export default function initIPC() {
   // sqlite 查询
   ipcMain.handle('sqlite-query', (_event, params) => sqQuery(params))
   // sqlite 插入
@@ -33,15 +33,18 @@ export default function initIPC(win: BrowserWindow) {
   ipcMain.handle('sqlite-bulk-insert-or-update', (_event, params) => sqBulkInsertOrUpdate(params))
 
   // 是否最大化
-  ipcMain.handle('is-win-maxed', () => {
+  ipcMain.handle('is-win-maxed', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
     return win?.isMaximized()
   })
   //最小化
-  ipcMain.on('win-min', () => {
+  ipcMain.on('win-min', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
     win?.minimize()
   })
   //最大化
-  ipcMain.on('win-max', () => {
+  ipcMain.on('win-max', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
     if (win?.isMaximized()) {
       win?.restore()
     } else {
@@ -49,7 +52,8 @@ export default function initIPC(win: BrowserWindow) {
     }
   })
   //关闭程序
-  ipcMain.on('win-close', () => {
+  ipcMain.on('win-close', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
     win?.close()
   })
 
@@ -59,7 +63,12 @@ export default function initIPC(win: BrowserWindow) {
   })
 
   // 选择文件夹
-  ipcMain.handle('select-folder', async (_event, params?: SelectFolderParams) => {
+  ipcMain.handle('select-folder', async (event, params?: SelectFolderParams) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (!win) {
+      throw new Error('无法获取窗口')
+    }
+
     const result = await dialog.showOpenDialog(win, {
       properties: ['openDirectory'],
       title: params?.title || '选择文件夹',

@@ -35,6 +35,12 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   },
 })
 
+contextBridge.exposeInMainWorld('i18n', {
+  getLocalesPath: () => ipcRenderer.invoke('i18n-getLocalesPath'),
+  getLanguage: () => ipcRenderer.invoke('i18n-getLanguage'),
+  changeLanguage: (lng: string) => ipcRenderer.invoke('i18n-changeLanguage', lng),
+})
+
 contextBridge.exposeInMainWorld('electron', {
   isWinMaxed: () => ipcRenderer.invoke('is-win-maxed'),
   winMin: () => ipcRenderer.send('win-min'),

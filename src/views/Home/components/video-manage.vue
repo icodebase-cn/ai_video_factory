@@ -66,7 +66,7 @@
 
 <script lang="ts" setup>
 import { ref, toRaw } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/store'
 import { useToast } from 'vue-toastification'
 import { ListFilesFromFolderRecord } from '~/electron/types'
@@ -76,7 +76,7 @@ import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
-const { t } = useI18n()
+const { t } = useTranslation()
 
 defineProps<{
   disabled?: boolean

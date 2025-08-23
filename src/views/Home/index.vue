@@ -35,15 +35,15 @@ import TtsControl from './components/tts-control.vue'
 import VideoRender from './components/video-render.vue'
 
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { RenderStatus, useAppStore } from '@/store'
+import { useTranslation } from 'i18next-vue'
 import { useToast } from 'vue-toastification'
 import { ListFilesFromFolderRecord } from '~/electron/types'
 import random from 'random'
 
 const toast = useToast()
 const appStore = useAppStore()
-const { t } = useI18n()
+const { t } = useTranslation()
 
 // 渲染合成视频
 const TextGenerateInstance = ref<InstanceType<typeof TextGenerate> | null>()

@@ -12,6 +12,15 @@
       "quit": "Quit"
     },
     "language": "Language",
+    "edit": {
+      "root": "Edit",
+      "undo": "Undo",
+      "redo": "Redo",
+      "cut": "Cut",
+      "copy": "Copy",
+      "paste": "Paste",
+      "selectAll": "Select All"
+    },
     "view": {
       "root": "View",
       "resetZoom": "Reset Zoom",

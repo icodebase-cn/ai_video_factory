@@ -1,6 +1,12 @@
 # Changelog
 此项目的所有显著更改都将记录在此文件中。
 
+## [v1.1.1] - 2025-08-26
+### Fixed
+- Fix MAC copy and paste shortcut key failure issue
+### 修复
+- 修复MAC复制粘贴快捷键失效问题
+
 ## [v1.1.0] - 2025-08-22
 ### Added
 - Multi-Language Support

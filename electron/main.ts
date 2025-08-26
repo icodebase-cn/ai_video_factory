@@ -109,6 +109,18 @@ function buildMenu() {
       })) as MenuItemConstructorOptions[],
     },
     {
+      label: i18next.t('menu.edit.root'),
+      submenu: [
+        { label: i18next.t('menu.edit.undo'), role: 'undo' },
+        { label: i18next.t('menu.edit.redo'), role: 'redo' },
+        { type: 'separator' },
+        { label: i18next.t('menu.edit.cut'), role: 'cut' },
+        { label: i18next.t('menu.edit.copy'), role: 'copy' },
+        { label: i18next.t('menu.edit.paste'), role: 'paste' },
+        { label: i18next.t('menu.edit.selectAll'), role: 'selectAll' },
+      ] as MenuItemConstructorOptions[],
+    },
+    {
       label: i18next.t('menu.view.root'),
       submenu: [
         { role: 'toggleDevTools', visible: false },

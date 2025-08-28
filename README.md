@@ -167,7 +167,7 @@ Copyright © 2025 YILS.
 [stars-url]: https://github.com/YILS-LIN/short-video-factory/stargazers
 [issues-shield]: https://img.shields.io/github/issues/YILS-LIN/short-video-factory.svg?labelColor=black&style=flat-square
 [issues-url]: https://github.com/YILS-LIN/short-video-factory/issues
-[release-shield]: https://img.shields.io/github/v/release/YILS-LIN/short-video-factory?style=flat-round
+[release-shield]: https://img.shields.io/github/v/release/YILS-LIN/short-video-factory?labelColor=black&style=flat-square
 [release-url]: https://github.com/YILS-LIN/short-video-factory/releases
 [release-date-shield]: https://img.shields.io/github/release-date/YILS-LIN/short-video-factory?color=9cf&style=flat-round
 [license-shield]: https://img.shields.io/github/license/YILS-LIN/short-video-factory.svg?labelColor=black&style=flat-square

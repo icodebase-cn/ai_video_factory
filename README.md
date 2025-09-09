@@ -58,11 +58,13 @@
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-## 开始使用
+## 🚀 开始使用
 
 前往 [Github Release](https://github.com/YILS-LIN/short-video-factory/releases) 下载最新版本
 
 前往 [官方文档](https://short-video-factory.yils.blog) 查看使用手册
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
 ## 🗺️ 路线图
 

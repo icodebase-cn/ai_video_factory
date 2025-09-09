@@ -58,6 +58,12 @@
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
+## 开始使用
+
+前往 [Github Release](https://github.com/YILS-LIN/short-video-factory/releases) 下载最新版本
+
+前往 [官方文档](https://short-video-factory.yils.blog) 查看使用手册
+
 ## 🗺️ 路线图
 
 **喜欢可以点个 Star 支持一下哦！**
@@ -69,6 +75,7 @@
 - [x] 视频剪辑，文案、视频、音频、字幕合成，自动混剪
 - [x] 批量处理，支持一个批量任务，按预设自动持续合成视频
 - [x] 多语言支持，能够支持中文、英文等多种语言
+- [x] 完善的使用手册
 - [ ] 更全面的参数调整
 - [ ] 更多的语音合成API
 - [ ] 字幕特效，支持多种字幕样式和特效

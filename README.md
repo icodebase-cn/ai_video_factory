@@ -21,12 +21,15 @@
   </p>
 
   <!-- 项目徽章 -->
+
 [![贡献者][contributors-shield]][contributors-url]
 [![分支][forks-shield]][forks-url]
 [![星标][stars-shield]][stars-url]
 [![问题][issues-shield]][issues-url]
 [![最新版本][release-shield]][release-url]
+
 <!-- ![发布日期][release-date-shield] -->
+
 [![许可证][license-shield]][license-url]
 
   <p align="center">
@@ -37,6 +40,7 @@
 </div>
 
 <!-- 关于项目 -->
+
 ## 📖 关于项目
 
 短视频工厂是一个开源的桌面端应用，旨在通过AI技术简化短视频的制作流程。用户可以通过简单的提示词文本+视频分镜素材，快速且自动的剪辑出高质量的产品营销和泛内容短视频。该项目集成了AI驱动的文案生成、语音合成、视频剪辑、字幕特效等功能，旨在为用户提供开箱即用的短视频制作体验。
@@ -82,7 +86,6 @@
 - [ ] 更多的语音合成API
 - [ ] 字幕特效，支持多种字幕样式和特效
 
-
 查看[开放问题](https://github.com/YILS-LIN/short-video-factory/issues)以获取提议功能（和已知问题）的完整列表。
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
@@ -109,6 +112,7 @@
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
 <!-- 贡献 -->
+
 ## 🤝 贡献
 
 贡献让开源社区成为了一个学习、启发和创造的绝佳场所。**非常感谢**您所做的任何贡献。
@@ -138,6 +142,7 @@
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
 <!-- 许可证 -->
+
 ## 🎗 许可证
 
 [![许可证][license-shield]][license-url]
@@ -152,8 +157,6 @@ Copyright © 2025 YILS.
 
 你的 **Star ⭐** 和 **捐赠** 是我持续更新的最大动力！
 
-> 捐赠者未来也许会享有额外的特殊功能或新功能优先使用等福利
-
 <div align="left">
   <img src="https://github.com/user-attachments/assets/6b832dd3-38ea-4927-9c3b-97549c77a1f0" alt="YILS的微信赞赏码" width="400">
 </div>
@@ -163,6 +166,7 @@ Copyright © 2025 YILS.
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
 <!-- 星标历史 -->
+
 ## ⭐ 星标历史
 
 <div align="center">
@@ -174,6 +178,7 @@ Copyright © 2025 YILS.
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
 <!-- MARKDOWN链接和图片 -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/YILS-LIN/short-video-factory.svg?color=c4f042&labelColor=black&style=flat-square
 [contributors-url]: https://github.com/YILS-LIN/short-video-factory/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/YILS-LIN/short-video-factory.svg?color=8ae8ff&labelColor=black&style=flat-square

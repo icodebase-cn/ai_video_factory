@@ -64,16 +64,18 @@ const handleRenderVideo = async () => {
   }
 
   let randomBgm: ListFilesFromFolderRecord | undefined = undefined
-  try {
-    const bgmList = await window.electron.listFilesFromFolder({
-      folderPath: appStore.renderConfig.bgmPath.replace(/\\/g, '/'),
-    })
-    if (bgmList.length > 0) {
-      randomBgm = random.choice(bgmList)
+  if (appStore.renderConfig.bgmPath) {
+    try {
+      const bgmList = await window.electron.listFilesFromFolder({
+        folderPath: appStore.renderConfig.bgmPath.replace(/\\/g, '/'),
+      })
+      if (bgmList.length > 0) {
+        randomBgm = random.choice(bgmList)
+      }
+    } catch (error) {
+      console.log('获取背景音乐列表失败', error)
+      toast.error(t('errors.bgmListFailed'))
     }
-  } catch (error) {
-    console.log('获取背景音乐列表失败', error)
-    toast.error(t('errors.bgmListFailed'))
   }
 
   try {

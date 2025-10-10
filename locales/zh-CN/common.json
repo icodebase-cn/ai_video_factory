@@ -118,7 +118,7 @@
     "startRender": "开始合成",
     "stopRender": "停止合成",
     "autoBatch": "自动批量合成",
-    "bgmFolderLabel": "背景音乐文件夹（.mp3格式，从中随机选取）",
+    "bgmFolderLabel": "背景音乐文件夹（随机选取.mp3，为空则无背景音）",
     "output": {
       "width": "导出视频宽度",
       "height": "导出视频高度",

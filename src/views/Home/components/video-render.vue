@@ -235,7 +235,7 @@ const handleSelectBgmFolder = async () => {
 }
 
 const handleOpenHomePage = () => {
-  window.electron.openExternal({ url: 'https://yils.blog' })
+  window.electron.openExternal({ url: 'https://yils.blog/?ref=short-video-factory' })
 }
 </script>
 

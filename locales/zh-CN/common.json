@@ -38,24 +38,6 @@
       "learnMore": "了解更多"
     }
   },
-  "prompt": {
-    "label": "提示词"
-  },
-  "actions": {
-    "generate": "生成",
-    "stop": "停止",
-    "config": "配置",
-    "refreshAssets": "刷新素材库"
-  },
-  "llm": {
-    "configTitle": "配置大语言模型接口",
-    "modelName": "模型名称",
-    "apiUrl": "API 地址",
-    "apiKey": "API Key",
-    "compatibleNote": "兼容任意 OpenAI 标准接口",
-    "connectSuccess": "大模型连接成功",
-    "connectFailedPrefix": "大模型连接失败，请检查配置是否正确"
-  },
   "common": {
     "close": "关闭",
     "test": "测试",
@@ -63,8 +45,17 @@
     "select": "选择",
     "noData": "无数据"
   },
-  "output": {
-    "label": "输出文案（可编辑）"
+  "actions": {
+    "generate": "生成",
+    "stop": "停止",
+    "config": "配置",
+    "refreshAssets": "刷新素材库"
+  },
+  "dialogs": {
+    "selectAssetsFolderTitle": "选择分镜素材文件夹",
+    "selectOutputFolderTitle": "选择视频导出文件夹",
+    "selectBgmFolderTitle": "选择背景音乐文件夹",
+    "renderConfigTitle": "配置合成选项"
   },
   "errors": {
     "promptRequired": "提示词不能为空",
@@ -92,6 +83,17 @@
     "noContent": "暂无内容",
     "hintSelectFolder": "从上面选择一个包含足够分镜素材的文件夹"
   },
+  "llm": {
+    "promptLabel": "提示词",
+    "outputLabel": "输出文案（可编辑）",
+    "configTitle": "配置大语言模型接口",
+    "modelName": "模型名称",
+    "apiUrl": "API 地址",
+    "apiKey": "API Key",
+    "compatibleNote": "兼容任意 OpenAI 标准接口",
+    "connectSuccess": "大模型连接成功",
+    "connectFailedPrefix": "大模型连接失败，请检查配置是否正确"
+  },
   "videoManage": {
     "assetsFolderLabel": "分镜视频素材文件夹",
     "noMp4InFolder": "选择的文件夹中不包含MP4视频文件",
@@ -99,11 +101,23 @@
     "readSuccess": "素材读取成功",
     "readFailed": "素材读取失败，请检查文件夹是否存在"
   },
-  "dialogs": {
-    "selectAssetsFolderTitle": "选择分镜素材文件夹",
-    "selectOutputFolderTitle": "选择视频导出文件夹",
-    "selectBgmFolderTitle": "选择背景音乐文件夹",
-    "renderConfigTitle": "配置合成选项"
+  "tts": {
+    "language": "语言",
+    "gender": "性别",
+    "voice": "声音",
+    "speed": "语速",
+    "tryText": "试听文本",
+    "tryListen": "试听",
+    "selectLanguageGenderFirst": "请先选择语言和性别",
+    "selectVoiceWarning": "请选择一个声音",
+    "tryTextEmptyWarning": "试听文本不能为空",
+    "playTryAudio": "播放试听语音",
+    "trySynthesisFailedNetwork": "试听语音合成失败，请检查网络",
+    "genderMale": "男性",
+    "genderFemale": "女性",
+    "speedSlow": "慢",
+    "speedMedium": "中",
+    "speedFast": "快"
   },
   "render": {
     "status": {
@@ -126,24 +140,6 @@
       "format": "导出格式",
       "folder": "导出文件夹"
     }
-  },
-  "tts": {
-    "language": "语言",
-    "gender": "性别",
-    "voice": "声音",
-    "speed": "语速",
-    "tryText": "试听文本",
-    "tryListen": "试听",
-    "selectLanguageGenderFirst": "请先选择语言和性别",
-    "selectVoiceWarning": "请选择一个声音",
-    "tryTextEmptyWarning": "试听文本不能为空",
-    "playTryAudio": "播放试听语音",
-    "trySynthesisFailedNetwork": "试听语音合成失败，请检查网络",
-    "genderMale": "男性",
-    "genderFemale": "女性",
-    "speedSlow": "慢",
-    "speedMedium": "中",
-    "speedFast": "快"
   },
   "footer": {
     "poweredBy": "Powered by YILS（博客地址：https://yils.blog）"

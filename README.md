@@ -56,8 +56,6 @@
 
 ## 🚀 开始使用
 
-前往 [Github Release](https://github.com/icodebase-cn/ai_video_factory/releases) 下载最新版本
-
 前往 [官方文档](https://aiqianji.com/blog/topic/390) 查看使用手册
 
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>

@@ -130,10 +130,18 @@ refreshAssets()
 // 获取视频分镜随机素材片段
 const videoInfoList = ref<VideoInfo[]>([])
 const getVideoSegments = (options: { duration: number }) => {
-  // 判断素材库是否满足时长要求
-  if (videoInfoList.value.reduce((pre, cur) => pre + cur.duration, 0) < options.duration) {
+  // 视频资源总时长
+  const videeAssetsTotalDuration = videoInfoList.value.reduce((pre, cur) => pre + cur.duration, 0)
+
+  // 判断素材库视频时长是否过短
+  if (videeAssetsTotalDuration < 1) {
     throw new Error(t('errors.assetsDurationInsufficient'))
   }
+
+  // 判断素材库是否满足TTS时长要求
+  // if (videeAssetsTotalDuration < options.duration) {
+  //   throw new Error(t('errors.assetsDurationInsufficient'))
+  // }
 
   // 搜集随机素材片段
   const segments: Pick<RenderVideoParams, 'videoFiles' | 'timeRanges'> = {

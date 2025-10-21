@@ -5,5 +5,8 @@
   },
   "css.customData": [
     ".vscode/unocss.json"
-  ]
+  ],
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

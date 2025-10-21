@@ -8,11 +8,10 @@ import { generateUniqueFileName } from '../lib/tools'
 
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 const isWindows = process.platform === 'win32'
-const ffmpegPath: string = isWindows
-  ? VITE_DEV_SERVER_URL
-    ? require('ffmpeg-static')
-    : (require('ffmpeg-static') as string).replace('app.asar', 'app.asar.unpacked')
-  : 'ffmpeg'
+
+const ffmpegPath: string = VITE_DEV_SERVER_URL
+  ? require('ffmpeg-static')
+  : (require('ffmpeg-static') as string).replace('app.asar', 'app.asar.unpacked')
 
 // async function test() {
 //   try {

@@ -32,6 +32,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           export ELECTRON_BUILDER_EXTRA_ARGS="--universal"
+          export FFMPEG_BINARIES_URL="https://cdn.npmmirror.com/binaries/ffmpeg-static"
           npm --arch=x64 rebuild -f ffmpeg-static && mv node_modules/ffmpeg-static/ffmpeg{,-x64}
           npm --arch=arm64 rebuild -f ffmpeg-static && mv node_modules/ffmpeg-static/ffmpeg{,-arm64}
           cd node_modules/ffmpeg-static

@@ -25,10 +25,16 @@ function run(cmd, opts = {}) {
 const archs = ['x64', 'arm64']
 const ffmpegStaticDir = path.join(__dirname, '..', 'node_modules', 'ffmpeg-static')
 
-// rebuild 两次
+// 移除原来的二进制文件
+run('rm -f ffmpeg', { cwd: ffmpegStaticDir })
+
+// 获取两种架构的二进制文件
 archs.forEach((arch) => {
   run(
-    `pnpm cross-env FFMPEG_BINARIES_URL=${FFMPEG_BINARIES_URL} npm --arch=${arch} rebuild -f ffmpeg-static`,
+    `pnpm cross-env FFMPEG_BINARIES_URL=${FFMPEG_BINARIES_URL} npm_config_arch=${arch} npm run install`,
+    {
+      cwd: ffmpegStaticDir,
+    },
   )
   run(`mv ${ffmpegStaticDir}/ffmpeg ${ffmpegStaticDir}/ffmpeg-${arch}`)
 })

@@ -2,7 +2,7 @@
 All significant changes to this project will be recorded in this file.
 此项目的所有显著更改都将记录在此文件中。
 
-## [v1.1.9] - 2025-10-22
+## [v1.1.10] - 2025-10-22
 ### Added
 - Add MAC embedding FFmpeg support
 ### Fixed

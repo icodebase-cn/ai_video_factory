@@ -33,11 +33,11 @@ jobs:
         run: |
           export ELECTRON_BUILDER_EXTRA_ARGS="--universal"
           export FFMPEG_BINARIES_URL="https://cdn.npmmirror.com/binaries/ffmpeg-static"
-          sed -i '' '/^arch=/d' .npmrc && echo 'arch=x64' >> .npmrc
+          sed -i '' 's/npm_config_arch/FFMPEG_ARCH/g' node_modules/ffmpeg-static/install.js
+          export FFMPEG_ARCH="x64"
           npm --arch=x64 rebuild -f ffmpeg-static && mv node_modules/ffmpeg-static/ffmpeg{,-x64}
-          sed -i '' '/^arch=/d' .npmrc && echo 'arch=arm64' >> .npmrc
+          export FFMPEG_ARCH="arm64"
           npm --arch=arm64 rebuild -f ffmpeg-static && mv node_modules/ffmpeg-static/ffmpeg{,-arm64}
-          sed -i '' '/^arch=/d' .npmrc
           cd node_modules/ffmpeg-static
           lipo -create ffmpeg-arm64 ffmpeg-x64 -output ffmpeg
           chmod 0755 ffmpeg

@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, macos-latest-large, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     steps:
       - name: Check out Git repository
@@ -32,6 +32,11 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           export ELECTRON_BUILDER_EXTRA_ARGS="--universal"
+          npm rebuild --arch=x64 -f ffmpeg-static && mv node_modules/ffmpeg-static/ffmpeg{,-x64}
+          npm rebuild --arch=arm64 -f ffmpeg-static && mv node_modules/ffmpeg-static/ffmpeg{,-arm64}
+          cd node_modules/ffmpeg-static
+          lipo -create ffmpeg-arm64 ffmpeg-x64 -output ffmpeg
+          cd ../..
           pnpm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

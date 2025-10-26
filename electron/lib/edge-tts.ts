@@ -217,7 +217,7 @@ class SynthesisResultImpl implements SynthesisResult {
 
   constructor(wordList: WordBoundary[], audioData: Buffer[]) {
     this.wordList = wordList
-    this.audioBuffer = audioData.length > 0 ? Buffer.concat(audioData) : Buffer.alloc(0)
+    this.audioBuffer = Buffer.concat(audioData)
   }
 
   toBase64(): string {
@@ -232,18 +232,10 @@ class SynthesisResultImpl implements SynthesisResult {
       throw new Error('No audio data available to save.')
     }
 
-    try {
-      let finalPath = outputPath
-      if (!outputPath.endsWith(AUDIO_EXTENSION)) {
-        finalPath = `${outputPath}${this.getExtension()}`
-      }
-
-      writeFileSync(finalPath, this.audioBuffer)
-      console.log(`Audio file saved successfully: ${finalPath}`)
-    } catch (error) {
-      console.error('Failed to save audio file:', error)
-      const errorMessage = error instanceof Error ? error.message : String(error)
-      throw new Error(`Failed to save audio file: ${errorMessage}`)
+    if (outputPath.endsWith(AUDIO_EXTENSION)) {
+      writeFileSync(outputPath, this.audioBuffer)
+    } else {
+      writeFileSync(`${outputPath}${this.getExtension()}`, this.audioBuffer)
     }
   }
 
@@ -402,11 +394,6 @@ export class EdgeTTS {
       })
 
       ws.on('close', () => {
-        // 确保音频数据不为空
-        if (audioStream.length === 0) {
-          reject(new Error('No audio data received from TTS service'))
-          return
-        }
         const result = new SynthesisResultImpl(wordList, audioStream)
         resolve(result)
       })

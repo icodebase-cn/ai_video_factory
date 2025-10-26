@@ -55,7 +55,7 @@ export async function edgeTtsSynthesizeToFile(
   if (!fs.existsSync(path.dirname(outputPath))) {
     fs.mkdirSync(path.dirname(outputPath), { recursive: true })
   }
-  await result.toFile(outputPath)
+  result.toFile(outputPath)
 
   if (withCaption) {
     const srtString = result.getCaptionSrtString()
@@ -66,17 +66,8 @@ export async function edgeTtsSynthesizeToFile(
     fs.writeFileSync(srtPath, srtString)
   }
 
-  let duration = 0
-  try {
-    const metadata = await parseBuffer(result.getBuffer())
-    duration = metadata.format.duration || 0
-  } catch (error) {
-    console.warn('Failed to parse audio metadata, using default duration:', error)
-    // 如果无法解析元数据，使用默认值
-    duration = 0
-  }
-
+  const metadata = await parseBuffer(result.getBuffer())
   return {
-    duration,
+    duration: metadata.format.duration,
   }
 }

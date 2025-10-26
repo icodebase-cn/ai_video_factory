@@ -7,7 +7,7 @@ console.log('Downloading ffmpeg...')
 execSync(
   `cross-env FFMPEG_BINARIES_URL=${process.env['npm_config_ffmpeg_binaries_url']} npm rebuild ffmpeg-static`,
 )
-console.log(`FFmpeg path: ${ffmpeg}`)
+console.log(`FFmpeg downloaded to path: ${ffmpeg}`)
 
 const isWindows = process.platform === 'win32'
 if (!isWindows) {

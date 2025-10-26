@@ -38,24 +38,6 @@
       "learnMore": "Learn More"
     }
   },
-  "prompt": {
-    "label": "Prompt"
-  },
-  "actions": {
-    "generate": "Generate",
-    "stop": "Stop",
-    "config": "Configure",
-    "refreshAssets": "Refresh Assets"
-  },
-  "llm": {
-    "configTitle": "Configure LLM API",
-    "modelName": "Model Name",
-    "apiUrl": "API URL",
-    "apiKey": "API Key",
-    "compatibleNote": "Compatible with any OpenAI-compatible API",
-    "connectSuccess": "LLM connected successfully",
-    "connectFailedPrefix": "LLM connection failed, please check your configuration"
-  },
   "common": {
     "close": "Close",
     "test": "Test",
@@ -63,8 +45,17 @@
     "select": "Select",
     "noData": "No data"
   },
-  "output": {
-    "label": "Output Text (editable)"
+  "actions": {
+    "generate": "Generate",
+    "stop": "Stop",
+    "config": "Configure",
+    "refreshAssets": "Refresh Assets"
+  },
+  "dialogs": {
+    "selectAssetsFolderTitle": "Select storyboard assets folder",
+    "selectOutputFolderTitle": "Select video export folder",
+    "selectBgmFolderTitle": "Select background music folder",
+    "renderConfigTitle": "Configure render options"
   },
   "errors": {
     "promptRequired": "Prompt cannot be empty",
@@ -92,6 +83,17 @@
     "noContent": "No content yet",
     "hintSelectFolder": "Please choose a folder above with enough storyboard assets"
   },
+  "llm": {
+    "promptLabel": "Prompt",
+    "outputLabel": "Output Text (editable)",
+    "configTitle": "Configure LLM API",
+    "modelName": "Model Name",
+    "apiUrl": "API URL",
+    "apiKey": "API Key",
+    "compatibleNote": "Compatible with any OpenAI-compatible API",
+    "connectSuccess": "LLM connected successfully",
+    "connectFailedPrefix": "LLM connection failed, please check your configuration"
+  },
   "videoManage": {
     "assetsFolderLabel": "Storyboard assets folder",
     "noMp4InFolder": "No MP4 video files found in the selected folder",
@@ -99,11 +101,23 @@
     "readSuccess": "Assets loaded successfully",
     "readFailed": "Failed to read assets. Please check if the folder exists"
   },
-  "dialogs": {
-    "selectAssetsFolderTitle": "Select storyboard assets folder",
-    "selectOutputFolderTitle": "Select video export folder",
-    "selectBgmFolderTitle": "Select background music folder",
-    "renderConfigTitle": "Configure render options"
+  "tts": {
+    "language": "Language",
+    "gender": "Gender",
+    "voice": "Voice",
+    "speed": "Speed",
+    "tryText": "Try-listen text",
+    "tryListen": "Try listen",
+    "selectLanguageGenderFirst": "Please select language and gender first",
+    "selectVoiceWarning": "Please select a voice",
+    "tryTextEmptyWarning": "Try-listen text cannot be empty",
+    "playTryAudio": "Playing try-listen audio",
+    "trySynthesisFailedNetwork": "Failed to synthesize try-listen audio. Please check network",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "speedSlow": "Slow",
+    "speedMedium": "Medium",
+    "speedFast": "Fast"
   },
   "render": {
     "status": {
@@ -126,24 +140,6 @@
       "format": "Output format",
       "folder": "Output folder"
     }
-  },
-  "tts": {
-    "language": "Language",
-    "gender": "Gender",
-    "voice": "Voice",
-    "speed": "Speed",
-    "tryText": "Try-listen text",
-    "tryListen": "Try listen",
-    "selectLanguageGenderFirst": "Please select language and gender first",
-    "selectVoiceWarning": "Please select a voice",
-    "tryTextEmptyWarning": "Try-listen text cannot be empty",
-    "playTryAudio": "Playing try-listen audio",
-    "trySynthesisFailedNetwork": "Failed to synthesize try-listen audio. Please check network",
-    "genderMale": "Male",
-    "genderFemale": "Female",
-    "speedSlow": "Slow",
-    "speedMedium": "Medium",
-    "speedFast": "Fast"
   },
   "footer": {
     "poweredBy": "Powered by AIQianJi (Web: https://aiqianji.com)"

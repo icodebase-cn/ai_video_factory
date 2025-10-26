@@ -66,9 +66,9 @@ const handleRenderVideo = async () => {
   let randomBgm: ListFilesFromFolderRecord | undefined = undefined
   if (appStore.renderConfig.bgmPath) {
     try {
-      const bgmList = await window.electron.listFilesFromFolder({
+      const bgmList = (await window.electron.listFilesFromFolder({
         folderPath: appStore.renderConfig.bgmPath.replace(/\\/g, '/'),
-      })
+      })).filter((asset) => asset.name.endsWith('.mp3'))
       if (bgmList.length > 0) {
         randomBgm = random.choice(bgmList)
       }

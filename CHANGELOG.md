@@ -1,5 +1,23 @@
 # Changelog
+All significant changes to this project will be recorded in this file.
 此项目的所有显著更改都将记录在此文件中。
+
+## [v1.1.10] - 2025-10-22
+### Added
+- Add MAC embedding FFmpeg support
+### Fixed
+- Resolve the error of not setting BGM folder
+- Resolve the issue of reporting errors when there are non mp3 files in the BGM folder
+- Remove the restriction that the total duration of video materials should not be shorter than that of voice
+- Optimize some details
+### 添加
+- 增加MAC嵌入FFmpeg支持
+### 修复
+- 解决不设置bgm文件夹报错
+- 解决 BGM 文件夹存在非 mp3 文件时报错问题
+- 移除视频素材总时长不的短于语音的限制
+- 优化一些细节
+
 
 ## [v1.1.1] - 2025-08-26
 ### Fixed

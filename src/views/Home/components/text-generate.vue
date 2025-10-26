@@ -5,7 +5,7 @@
         <v-textarea
           class="h-full"
           v-model="appStore.prompt"
-          :label="t('prompt.label')"
+          :label="t('llm.promptLabel')"
           counter
           persistent-counter
           no-resize
@@ -90,7 +90,7 @@
         <v-textarea
           class="h-full"
           v-model="outputText"
-          :label="t('output.label')"
+          :label="t('llm.outputLabel')"
           counter
           persistent-counter
           no-resize

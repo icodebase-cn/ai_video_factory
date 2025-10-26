@@ -32,6 +32,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           export ELECTRON_BUILDER_EXTRA_ARGS="--universal"
+          pnpm run lipo-ffmpeg
           pnpm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
